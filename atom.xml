@@ -3,7 +3,7 @@
   <title><![CDATA[咕噜灵波]]></title>
   <link href="http://forrest0503.github.io/atom.xml" rel="self"/>
   <link href="http://forrest0503.github.io/"/>
-  <updated>2020-04-30T18:19:52+08:00</updated>
+  <updated>2020-04-30T19:58:52+08:00</updated>
   <id>http://forrest0503.github.io/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -27,11 +27,18 @@
 
 <p>而用交叉熵作为损失函数时，存在σ-y这一项。意思是只有当预测趋近于label的时候，梯度才趋近于0，这正是我们的目标。</p>
 
-<h3 id="toc_2">从凸函数的角度看</h3>
+<h3 id="toc_2">从是否是凸函数的角度看</h3>
 
 <p>我们都知道，非凸函数在优化时可能会陷入局部最优，所谓凸函数，就是二阶导处处大于零的函数。<br/>
 Sigmoid+MSE时，损失函数是非凸的，很容易陷入局部最优。<br/>
 Sigmoid+BCE时，损失函数是凸函数，一定能找到最优解。</p>
+
+<p>下面证明一下<br/>
+<img src="media/15882412109735/3091588247676_.pic_%E5%89%AF%E6%9C%AC.jpg" alt="3091588247676_.pic_副本"/><br/>
+Sigmoid+MSE，二阶导可能小于0，所以是非凸的~</p>
+
+<p><img src="media/15882412109735/3081588247675_.pic_%E5%89%AF%E6%9C%AC.jpg" alt="3081588247675_.pic_副本"/><br/>
+Sigmoid+BCE时，二阶导永远大于等于0，所以是凸函数~</p>
 ]]>
     </content>
   </entry>
