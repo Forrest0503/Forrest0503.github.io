@@ -3,7 +3,7 @@
   <title><![CDATA[咕噜灵波]]></title>
   <link href="http://forrest0503.github.io/atom.xml" rel="self"/>
   <link href="http://forrest0503.github.io/"/>
-  <updated>2020-04-30T20:03:17+08:00</updated>
+  <updated>2020-04-30T20:14:10+08:00</updated>
   <id>http://forrest0503.github.io/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -23,9 +23,9 @@
 
 <h3 id="toc_1">从梯度的角度看</h3>
 
-<p>目标函数对参数W求导，存在σ(1-σ)这一项，这就导致了，不论你预测趋近1或者-1，梯度都能趋近于0。会更容易导致梯度消失，导致没办法朝着正确的方向进行优化。</p>
+<p>目标函数对参数W求导，存在 \( α\left ( 1-α \right )\) 这一项，这就导致了，不论你预测趋近1或者-1，梯度都能趋近于0。会更容易导致梯度消失，导致没办法朝着正确的方向进行优化。</p>
 
-<p>而用交叉熵作为损失函数时，存在σ-y这一项。意思是只有当预测趋近于label的时候，梯度才趋近于0，这正是我们的目标。</p>
+<p>而用交叉熵作为损失函数时，存在\(σ-y\) 这一项。意思是只有当预测趋近于label的时候，梯度才趋近于0，这正是我们的目标。</p>
 
 <h3 id="toc_2">从是否是凸函数的角度看</h3>
 
@@ -290,7 +290,7 @@ def listing(request):
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[TensorFlow笔记（持续更新）]]></title>
+    <title type="html"><![CDATA[TensorFlow初体验]]></title>
     <link href="http://forrest0503.github.io/14965491161776.html"/>
     <updated>2017-06-04T12:05:16+08:00</updated>
     <id>http://forrest0503.github.io/14965491161776.html</id>

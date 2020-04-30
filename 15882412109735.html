@@ -8,7 +8,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
+    <meta name="description" content="肥宅炼丹术士的日常">
 
     <!-- 魔改部分 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
@@ -88,9 +88,9 @@
 
 <h3 id="toc_1">从梯度的角度看</h3>
 
-<p>目标函数对参数W求导，存在σ(1-σ)这一项，这就导致了，不论你预测趋近1或者-1，梯度都能趋近于0。会更容易导致梯度消失，导致没办法朝着正确的方向进行优化。</p>
+<p>目标函数对参数W求导，存在 \( α\left ( 1-α \right )\) 这一项，这就导致了，不论你预测趋近1或者-1，梯度都能趋近于0。会更容易导致梯度消失，导致没办法朝着正确的方向进行优化。</p>
 
-<p>而用交叉熵作为损失函数时，存在σ-y这一项。意思是只有当预测趋近于label的时候，梯度才趋近于0，这正是我们的目标。</p>
+<p>而用交叉熵作为损失函数时，存在\(σ-y\) 这一项。意思是只有当预测趋近于label的时候，梯度才趋近于0，这正是我们的目标。</p>
 
 <h3 id="toc_2">从是否是凸函数的角度看</h3>
 
