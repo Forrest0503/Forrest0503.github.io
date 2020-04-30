@@ -3,12 +3,38 @@
   <title><![CDATA[咕噜灵波]]></title>
   <link href="http://forrest0503.github.io/atom.xml" rel="self"/>
   <link href="http://forrest0503.github.io/"/>
-  <updated>2020-04-30T18:04:33+08:00</updated>
+  <updated>2020-04-30T18:19:52+08:00</updated>
   <id>http://forrest0503.github.io/</id>
   <author>
     <name><![CDATA[]]></name>
   </author>
   <generator uri="http://www.coderforart.com/">CoderForArt</generator>
+  
+  <entry>
+    <title type="html"><![CDATA[逻辑回归为何不用MSE做为损失函数]]></title>
+    <link href="http://forrest0503.github.io/15882412109735.html"/>
+    <updated>2020-04-30T18:06:50+08:00</updated>
+    <id>http://forrest0503.github.io/15882412109735.html</id>
+    <content type="html">
+<![CDATA[<h3 id="toc_0">直观的理解</h3>
+
+<p>首先，MSE损失是有上限的，在所有样本都预测错误时，MSE最大值是1；而交叉熵可以取到正无穷。所以交叉熵可以基于错误预测更多的“惩罚”。<br/>
+另外，分类问题中的label是离散值0和1，可看做是一种特殊的“回归”问题，只不过目标的值域只有两个数。。。所以感觉效果不会很好。</p>
+
+<h3 id="toc_1">从梯度的角度看</h3>
+
+<p>目标函数对参数W求导，存在σ(1-σ)这一项，这就导致了，不论你预测趋近1或者-1，梯度都能趋近于0。会更容易导致梯度消失，导致没办法朝着正确的方向进行优化。</p>
+
+<p>而用交叉熵作为损失函数时，存在σ-y这一项。意思是只有当预测趋近于label的时候，梯度才趋近于0，这正是我们的目标。</p>
+
+<h3 id="toc_2">从凸函数的角度看</h3>
+
+<p>我们都知道，非凸函数在优化时可能会陷入局部最优，所谓凸函数，就是二阶导处处大于零的函数。<br/>
+Sigmoid+MSE时，损失函数是非凸的，很容易陷入局部最优。<br/>
+Sigmoid+BCE时，损失函数是凸函数，一定能找到最优解。</p>
+]]>
+    </content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[使用Django实现简易购物网站]]></title>
