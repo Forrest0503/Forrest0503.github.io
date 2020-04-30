@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+         关于swift3.0的异常捕捉 - 咕噜灵波 
+    </title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+
+    <!-- 魔改部分 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="asset/style.css">
+
+    <link rel="stylesheet" type="text/css" href="asset/cuckoo.css">
+    <link rel="stylesheet" type="text/css" href="asset/main.css">
+    <link rel="stylesheet" type="text/css" href="asset/atom-one-light.css">
+
+
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="咕噜灵波">
+
+    <script src="asset/highlight.pack.js"></script>
+    <!--    <script>hljs.initHighlightingOnLoad();</script>-->
+</head>
+
+<body>
+    <header class="site-header cuckoo">
+
+        <div class="wrapper">
+            <a class="site-title" href="index.html">咕噜灵波</a>
+            <nav class="site-nav">
+                <a href="#" class="menu-icon">
+                    <svg viewBox="0 0 18 15">
+                        <path fill="#424242"
+                            d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z">
+                        </path>
+                        <path fill="#424242"
+                            d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z">
+                        </path>
+                        <path fill="#424242"
+                            d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z">
+                        </path>
+                    </svg>
+                </a>
+                <div class="trigger">
+                    
+                    <a class="page-link" href="index.html">Home</a>
+                    
+                    <a class="page-link" href="archives.html">Archives</a>
+                    
+                </div>
+            </nav>
+        </div>
+    </header>
+
+
+
+    <script src="./asset/live2d/autoload.js"></script>
+</body>
+
+</html> <div class="page-content cuckoo">
+
+    <div class="pattern-center ">
+        <div id="surpriseImg" class="pattern-attachment-img"> 
+            <!-- <img src="suprizeImg#lazyload-blur" data-src="suprizeImg" class="lazyload"
+                onerror="imgError(this,3)" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;"> -->
+        </div>
+        <header class="pattern-header ">
+            <h1 class="entry-title">关于swift3.0的异常捕捉</h1>
+        </header>
+    </div>
+
+    <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+            <header class="post-header">
+                <!-- <h1 class="post-title" itemprop="name headline">关于swift3.0的异常捕捉</h1> -->
+                <div class="post-description">
+                    
+                </div>
+            </header>
+            <div class="post-content" itemprop="articleBody">
+                <p>假设有以下可能抛出异常的代码</p>
+
+<pre><code class="language-text">enum ThrowableError : ErrorProtocol { case BadError }
+
+func doSomething() throws -&gt; String {
+    if everythingIsFine {
+        return &quot;Everything is ok&quot;
+    } else {
+        throw ThrowableError.BadError
+    }
+}
+</code></pre>
+
+<p>在swift3.0中，可以用ErrorProtocol类型来代表错误。（swift2.2中是ErrorType）</p>
+
+<p>异常捕捉有两种形式：do-catch和try？</p>
+
+<h4 id="toc_0">do-catch方式</h4>
+
+<p>在do代码块中，用try来标记可能抛出异常的语句</p>
+
+<pre><code class="language-text">do {
+     let result = try doSomething()
+     defer {
+        //即使doSomething抛出了异常，这里的地方也会在do作用域结束的时候被调用
+     }
+}catch {
+     print(error)
+}
+</code></pre>
+
+<blockquote>
+<p>小技巧：defer 关键字可以用来包裹一段代码，这个代码块将会在<em>当前作用域结束的时候</em>被调用。这通常被用来对当前的代码进行一些清理工作，比如关闭打开的文件等。可以在同一个作用域中指定多个 defer 代码块，在当前作用域结束时，它们会以相反的顺序被调用，即先定义的后执行，后定义的先执行。</p>
+</blockquote>
+
+<p>或者，你还可以继续把这个异常抛给别人- -</p>
+
+<pre><code class="language-text">func doSomeOtherThing() throws -&gt; Void {    
+    // 不包含do-catch
+    // 将异常抛给别人
+    let result = try doSomething()
+}
+</code></pre>
+
+<h4 id="toc_1">try? or try!</h4>
+
+<p>执行try？语句时，结果有两种情况：如果doSomething()抛出了异常，则返回nil；如果一切正常，则返回一个包裹在optional中的result。</p>
+
+<p>可以用if let处理result</p>
+
+<pre><code class="language-text">if let result = try? doSomething() {
+    // 做点什么
+} else {
+    // doSomething()抛出了异常
+}
+</code></pre>
+
+<p>对于这种情况，可以用guard关键字进行更优雅的处理。<br/>
+guard的介绍如下：</p>
+
+<blockquote>
+<p>与if语句相同的是，guard也是基于一个表达式的布尔值去判断一段代码是否该被执行。与if语句不同的是，guard只有在条件不满足的时候才会执行这段代码。你可以把guard近似的看做是Assert，但是你可以优雅的退出而非崩溃。</p>
+</blockquote>
+
+<p>于是，上面的代码可以改写为</p>
+
+<pre><code class="language-text">guard let result = try? doSomething() else {
+    // doSomething()抛出了异常
+    return
+}
+// 做点什么
+</code></pre>
+
+<p>我认为，用guard语句的好处在于，核心的代码（也就是你真正要做的事）是放在判断语句外面的，这就意味着在阅读核心代码之前，不需要读一大堆的判断条件，这样就大大地增强了可读性。</p>
+
+<p>另外，有时会用到try！语句，来避免result又被包裹到一个optional中，当然，只有当你确定该条语句绝对绝对不会抛出异常时，才能这么用！别问我怎么知道的。。。</p>
+
+            </div>
+            <div>
+                
+                
+                
+            </div>
+        </article>
+    </div>
+</div>
+
+<script src="asset/jquery-3.3.1.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#footer').show()
+    })
+
+    /** 生成1-4的随机图片标签 **/
+    function getRandomImage() {
+        var index = Math.ceil(Math.random() * 10) % 4;
+        var path = './asset/banner/' + index + '.jpg'
+        // return '<img src="/' + index + '.jpg" >';
+        return '<img src="' + path + '#lazyload-blur" data-src="' + path +
+            '" class="lazyload" onerror="imgError(this,3)" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">'
+    }
+
+    /** 根据传进来的元素id,追加一个随机图片并显示 **/
+    function showRandonImage(divId) {
+        var oldHTML = document.getElementById(divId).innerHTML;
+        var newHTML = oldHTML + getRandomImage();
+        document.getElementById(divId).innerHTML = newHTML;
+    }
+
+    showRandonImage('surpriseImg');
+</script>  <footer id="footer" class="cuckoo page-footer" style="display: none">
+    <div class="wrapper">
+        <p>This blog is maintained by Forrest</a></p>
+    </div>
+</footer>
+
+

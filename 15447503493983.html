@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+         使用Django实现简易购物网站 - 咕噜灵波 
+    </title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+
+    <!-- 魔改部分 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="asset/style.css">
+
+    <link rel="stylesheet" type="text/css" href="asset/cuckoo.css">
+    <link rel="stylesheet" type="text/css" href="asset/main.css">
+    <link rel="stylesheet" type="text/css" href="asset/atom-one-light.css">
+
+
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="咕噜灵波">
+
+    <script src="asset/highlight.pack.js"></script>
+    <!--    <script>hljs.initHighlightingOnLoad();</script>-->
+</head>
+
+<body>
+    <header class="site-header cuckoo">
+
+        <div class="wrapper">
+            <a class="site-title" href="index.html">咕噜灵波</a>
+            <nav class="site-nav">
+                <a href="#" class="menu-icon">
+                    <svg viewBox="0 0 18 15">
+                        <path fill="#424242"
+                            d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z">
+                        </path>
+                        <path fill="#424242"
+                            d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z">
+                        </path>
+                        <path fill="#424242"
+                            d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z">
+                        </path>
+                    </svg>
+                </a>
+                <div class="trigger">
+                    
+                    <a class="page-link" href="index.html">Home</a>
+                    
+                    <a class="page-link" href="archives.html">Archives</a>
+                    
+                </div>
+            </nav>
+        </div>
+    </header>
+
+
+
+    <script src="./asset/live2d/autoload.js"></script>
+</body>
+
+</html> <div class="page-content cuckoo">
+
+    <div class="pattern-center ">
+        <div id="surpriseImg" class="pattern-attachment-img"> 
+            <!-- <img src="suprizeImg#lazyload-blur" data-src="suprizeImg" class="lazyload"
+                onerror="imgError(this,3)" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;"> -->
+        </div>
+        <header class="pattern-header ">
+            <h1 class="entry-title">使用Django实现简易购物网站</h1>
+        </header>
+    </div>
+
+    <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+            <header class="post-header">
+                <!-- <h1 class="post-title" itemprop="name headline">使用Django实现简易购物网站</h1> -->
+                <div class="post-description">
+                    
+                </div>
+            </header>
+            <div class="post-content" itemprop="articleBody">
+                <h2 id="toc_0">Intro</h2>
+
+<p>最近用Python实现了一套简易的购物网站，能够跑通基本的购物流程，但有些地方仍待完善，如付款功能、分页功能（一开始没考虑数据量...）</p>
+
+<h2 id="toc_1">实现的功能</h2>
+
+<h4 id="toc_2">管理员（商家）</h4>
+
+<p>1、 商品管理页</p>
+
+<ul>
+<li>商品发布</li>
+<li>商品删除</li>
+</ul>
+
+<p>2、 订单管理页</p>
+
+<ul>
+<li>查看订单列表</li>
+<li>查看订单详情</li>
+<li>对订单进行发货操作</li>
+</ul>
+
+<h4 id="toc_3">顾客</h4>
+
+<p>1、商城首页</p>
+
+<ul>
+<li>商品模糊搜索（按标题），并按相关度排序</li>
+<li>按类别浏览商品</li>
+</ul>
+
+<p>2、商品详情页</p>
+
+<ul>
+<li>选择尺寸、颜色、数量</li>
+<li>加入购物车</li>
+</ul>
+
+<p>3、购物车</p>
+
+<ul>
+<li>删除商品</li>
+<li>结算（省略了付款流程...）</li>
+</ul>
+
+<p>4、我的订单</p>
+
+<ul>
+<li>取消订单（未发货状态下）</li>
+<li>确认收货（已发货状态下）</li>
+</ul>
+
+<p>5、个人中心</p>
+
+<ul>
+<li>收货地址管理</li>
+</ul>
+
+<h2 id="toc_4">一些收获</h2>
+
+<h4 id="toc_5">（一）MTV模式</h4>
+
+<p>所谓的MTV，本质上就是MVC模式，只是定义上略有不同。其中，<br/>
+M 代表模型（Model）：负责业务对象和数据库的关系映射(ORM)，相当于Model。<br/>
+T 代表模板 (Template)：负责如何把页面展示给用户(html)，相当于View。<br/>
+V 代表视图（View）：负责业务逻辑，并在适当时候调用Model和Template，类似于Controller。<br/>
+另外，Django的URL路由系统也十分重要。URL路由负责将用户的请求分发给不同的View处理。</p>
+
+<p>这种设计模式的优点在于低耦合。举例来说，<br/>
+<strong>开发者</strong>更改一个应用程序中的URL而不用考虑view中逻辑的实现<br/>
+<strong>UI设计师</strong>可以改变HTML页面的样式而不用接触Python代码。<br/>
+<strong>数据库管理员</strong>可以重新命名数据表并且只需更改模型，无需从一大堆文件中进行查找和替换。</p>
+
+<h4 id="toc_6">（二）表单的提交</h4>
+
+<p>Django提供了两种不同的表单操作方式：表单类和网页传值（不知道正规叫法是什么...)<br/>
+本项目中我没有使用表单类，而是用网页传值的方式。<br/>
+1、在HTML文件的<code>&lt;input&gt;</code>或<code>&lt;textarea&gt;</code>标签中设置name属性和method属性<br/>
+2、在view中这么接收</p>
+
+<pre><code class="language-text">def foo(request):
+    a = request.GET[&#39;a&#39;]
+    b = request.POST[&#39;b&#39;]
+</code></pre>
+
+<h4 id="toc_7">（三）用cookie保存登录状态</h4>
+
+<p>cookie中最主要的部分当然是Name-Value键值对。<br/>
+Django对cookie有很好的支持，request对象的cookies属性是一个字典，包含了当前所有的cookie，可以用<code>if &#39;xxx&#39; in request.COOKIES</code>来判断cookie是否存在。response对象的set_cookie方法可以方便的保存cookie，以及设置失效时间。</p>
+
+<p>cookie处理的逻辑为：<br/>
+用户登录成功 -&gt; set_cookie<br/>
+用户退出登录 -&gt; delete_cookie<br/>
+用户请求需要登录的功能 -&gt; 检查cookie是否存在 <br/>
+-&gt; 若不存在，跳转到登录页面<br/>
+-&gt; 若存在，从cookie中读取出id, username</p>
+
+<h4 id="toc_8">（四）render与HttpResponseRedirect</h4>
+
+<p>render大概相当于刷新页面，浏览器地址栏上的地址不会改变；redirect相当于页面跳转，地址栏会发生变化。</p>
+
+<h4 id="toc_9">（五）引用静态文件</h4>
+
+<p>在编写Web前端代码时，经常要引入一些静态文件。例如，我使用了Bootstrap组件，就需要在Django项目中配置好静态文件的路径，然后再在HTML中引用。</p>
+
+<p>首先，在SportShop根目录下新建一个static文件夹，将js/css等文件分类放好。<br/>
+然后，在SportShop/settings.py中，增加一行</p>
+
+<pre><code class="language-text">STATIC_URL = &#39;/static/&#39;
+</code></pre>
+
+<p>在模板中引用静态文如下 </p>
+
+<pre><code class="language-text">&lt;!-- Bootstrap --&gt;
+    {% load static %}
+    &lt;link href=&quot;{% static &#39;css/bootstrap.min.css&#39; %}&quot; rel=&quot;stylesheet&quot;&gt;
+    &lt;link href=&quot;{% static &#39;css/dashboard.css&#39; %}&quot; rel=&quot;stylesheet&quot;&gt;
+</code></pre>
+
+<h4 id="toc_10">（六）存取媒体文件</h4>
+
+<p>既然是购物网站，就免不了上传图片。Django对于媒体文件的存取有严格的规则（坑了我好久），参考了不下十篇blog后，我才勉强算是解决了这一问题。由于大家的博客说法不一，所以我现在也没用一个特别准确的概念，只能列举一些可能导致Bug的点。</p>
+
+<p>1、首先在根目录下创建media文件夹<br/>
+2、settings.py中进行如下设置</p>
+
+<pre><code class="language-text">MEDIA_ROOT = &#39;media/&#39;
+MEDIA_URL = &#39;media/&#39;
+</code></pre>
+
+<p>3、对于需要引入media的模块，修改urls.py如下</p>
+
+<pre><code class="language-text">urlpatterns = [
+    ...
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+</code></pre>
+
+<p>目的应该是指明静态文件的路径（就是第2步设置的）</p>
+
+<p>4、<strong>最最重要的一点！！！写url的时候，最前面一定要加上斜线！</strong><br/>
+像这样，</p>
+
+<pre><code class="language-text">&lt;a href=&quot;/User/manager_login&quot;&gt;
+</code></pre>
+
+<p>不加反斜线的话，路径解析的时候会有问题</p>
+
+<pre><code class="language-text">~~ &lt;a href=&quot;User/manager_login&quot;&gt; ~~
+</code></pre>
+
+<p>这就涉及到了相对路径和绝对路径的问题了。Django文档中有如下说明</p>
+
+<blockquote>
+<p>Put strings here, like &quot;/home/html/django_templates&quot; or &quot;C:/www/django/templates&quot;.<br/>
+ Always use forward slashes, even on Windows.<br/>
+ Don&#39;t forget to use absolute paths, not relative paths.</p>
+</blockquote>
+
+<h4 id="toc_11">（七）上传图片</h4>
+
+<p>步骤如下，<br/>
+1、Model类中添加<code>models.ImageField()</code>字段<br/>
+2、HTML中添加<code>&lt;input&gt;</code>标签</p>
+
+<pre><code class="language-text">&lt;input type=&quot;file&quot; name=&quot;picture&quot;&gt;
+</code></pre>
+
+<p>3、在view中通过request.FILES[&#39;picture&#39;]获取template传过来的图片文件<br/>
+4、创建或修改model对象，然后save即可</p>
+
+<h4 id="toc_12">（八）关于数据一致性</h4>
+
+<ol>
+<li>貌似数据库事务（Transaction）是由MySQL负责处理的？我在对某个表中的数据进行批量修改时，当某一次操作发生了错误，好像是可以自动回滚的。。？不清楚是否需要再额外设置了。</li>
+<li>并发操作时的数据一致性。目前还没有考虑。</li>
+</ol>
+
+<h4 id="toc_13">（九）搜索</h4>
+
+<p>因为之前在学动态规划，看到了可以用dp实现Levenshtein，于是就尝试了一下写一个模糊搜索模块（模糊是挺模糊的，就是效果不咋样2333）<br/>
+总之练习了一下算法，还尝试了一下Jieba分词库，也算有点收获</p>
+
+<p>先写这些，有空再总结。</p>
+
+<h2 id="toc_14">关于效率</h2>
+
+<h4 id="toc_15">（一）分页功能的实现</h4>
+
+<p>在web后台开发中，分页功能是必不可少的，因为一旦数据量增大，如果不设分页，一次请求就会取出大量的数据，会严重影响性能。</p>
+
+<p>Django提供了Paginator类来帮助你管理分页的数据。Paginator的用法十分方便，视图函数长这样</p>
+
+<pre><code class="language-text">from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+def listing(request):
+    contact_list = Contacts.objects.all()
+    paginator = Paginator(contact_list, 25) # Show 25 contacts per page
+
+    page = request.GET.get(&#39;page&#39;)
+    try:
+        contacts = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        contacts = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        contacts = paginator.page(paginator.num_pages)
+
+    return render_to_response(&#39;list.html&#39;, {&quot;contacts&quot;: contacts})
+</code></pre>
+
+<p>初看这段代码时，我曾有过疑问：<code>Contacts.objects.all()</code>不是已经把所有记录都取出来了吗？？<br/>
+后来我查阅了QuerySet的文档，发现QuerySet是惰性执行的——创建查询集不会带来任何数据库的访问，只有在模板渲染的时候才会真正的查询。<br/>
+查看了Paginator的源码，发现page()方法返回的是一个切片，这样便不存在效率问题了。</p>
+
+<pre><code class="language-text">    def page(self, number):
+        &quot;&quot;&quot;Return a Page object for the given 1-based page number.&quot;&quot;&quot;
+        number = self.validate_number(number)
+        bottom = (number - 1) * self.per_page
+        top = bottom + self.per_page
+        if top + self.orphans &gt;= self.count:
+            top = self.count
+        return self._get_page(self.object_list[bottom:top], number, self)
+</code></pre>
+
+<h4 id="toc_16">（二）len() vs count()</h4>
+
+<p>当我们想获取QuerySet的大小时，很容易想到len()和count()这两种方式，但是这两种方式是有区别的，Django文档中有这样的注释：</p>
+
+<blockquote>
+<p>Note: If you only need to determine the number of records in the set (and don’t need the actual objects), it’s much more efficient to handle a count at the database level using SQL’s SELECT COUNT(*). Django provides a count() method for precisely this reason.</p>
+</blockquote>
+
+<p>也就是说，queryset.count()实际上执行的是SQL语句SELECT COUNT(*)，仅仅查询表有多少行；而len(queryset)执行的是SELECT语句。哪个效率更高不言而喻。</p>
+
+            </div>
+            <div>
+                
+                
+                
+            </div>
+        </article>
+    </div>
+</div>
+
+<script src="asset/jquery-3.3.1.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#footer').show()
+    })
+
+    /** 生成1-4的随机图片标签 **/
+    function getRandomImage() {
+        var index = Math.ceil(Math.random() * 10) % 4;
+        var path = './asset/banner/' + index + '.jpg'
+        // return '<img src="/' + index + '.jpg" >';
+        return '<img src="' + path + '#lazyload-blur" data-src="' + path +
+            '" class="lazyload" onerror="imgError(this,3)" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">'
+    }
+
+    /** 根据传进来的元素id,追加一个随机图片并显示 **/
+    function showRandonImage(divId) {
+        var oldHTML = document.getElementById(divId).innerHTML;
+        var newHTML = oldHTML + getRandomImage();
+        document.getElementById(divId).innerHTML = newHTML;
+    }
+
+    showRandonImage('surpriseImg');
+</script>  <footer id="footer" class="cuckoo page-footer" style="display: none">
+    <div class="wrapper">
+        <p>This blog is maintained by Forrest</a></p>
+    </div>
+</footer>
+
+

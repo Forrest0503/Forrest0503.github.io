@@ -1,0 +1,1056 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title><![CDATA[咕噜灵波]]></title>
+  <link href="http://forrest0503.github.io/atom.xml" rel="self"/>
+  <link href="http://forrest0503.github.io/"/>
+  <updated>2020-04-30T17:52:09+08:00</updated>
+  <id>http://forrest0503.github.io/</id>
+  <author>
+    <name><![CDATA[]]></name>
+  </author>
+  <generator uri="http://www.coderforart.com/">CoderForArt</generator>
+  
+  <entry>
+    <title type="html"><![CDATA[使用Django实现简易购物网站]]></title>
+    <link href="http://forrest0503.github.io/15447503493983.html"/>
+    <updated>2018-12-14T09:19:09+08:00</updated>
+    <id>http://forrest0503.github.io/15447503493983.html</id>
+    <content type="html">
+<![CDATA[<h2 id="toc_0">Intro</h2>
+
+<p>最近用Python实现了一套简易的购物网站，能够跑通基本的购物流程，但有些地方仍待完善，如付款功能、分页功能（一开始没考虑数据量...）</p>
+
+<h2 id="toc_1">实现的功能</h2>
+
+<h4 id="toc_2">管理员（商家）</h4>
+
+<p>1、 商品管理页</p>
+
+<ul>
+<li>商品发布</li>
+<li>商品删除</li>
+</ul>
+
+<p>2、 订单管理页</p>
+
+<ul>
+<li>查看订单列表</li>
+<li>查看订单详情</li>
+<li>对订单进行发货操作</li>
+</ul>
+
+<h4 id="toc_3">顾客</h4>
+
+<p>1、商城首页</p>
+
+<ul>
+<li>商品模糊搜索（按标题），并按相关度排序</li>
+<li>按类别浏览商品</li>
+</ul>
+
+<p>2、商品详情页</p>
+
+<ul>
+<li>选择尺寸、颜色、数量</li>
+<li>加入购物车</li>
+</ul>
+
+<p>3、购物车</p>
+
+<ul>
+<li>删除商品</li>
+<li>结算（省略了付款流程...）</li>
+</ul>
+
+<p>4、我的订单</p>
+
+<ul>
+<li>取消订单（未发货状态下）</li>
+<li>确认收货（已发货状态下）</li>
+</ul>
+
+<p>5、个人中心</p>
+
+<ul>
+<li>收货地址管理</li>
+</ul>
+
+<h2 id="toc_4">一些收获</h2>
+
+<h4 id="toc_5">（一）MTV模式</h4>
+
+<p>所谓的MTV，本质上就是MVC模式，只是定义上略有不同。其中，<br/>
+M 代表模型（Model）：负责业务对象和数据库的关系映射(ORM)，相当于Model。<br/>
+T 代表模板 (Template)：负责如何把页面展示给用户(html)，相当于View。<br/>
+V 代表视图（View）：负责业务逻辑，并在适当时候调用Model和Template，类似于Controller。<br/>
+另外，Django的URL路由系统也十分重要。URL路由负责将用户的请求分发给不同的View处理。</p>
+
+<p>这种设计模式的优点在于低耦合。举例来说，<br/>
+<strong>开发者</strong>更改一个应用程序中的URL而不用考虑view中逻辑的实现<br/>
+<strong>UI设计师</strong>可以改变HTML页面的样式而不用接触Python代码。<br/>
+<strong>数据库管理员</strong>可以重新命名数据表并且只需更改模型，无需从一大堆文件中进行查找和替换。</p>
+
+<h4 id="toc_6">（二）表单的提交</h4>
+
+<p>Django提供了两种不同的表单操作方式：表单类和网页传值（不知道正规叫法是什么...)<br/>
+本项目中我没有使用表单类，而是用网页传值的方式。<br/>
+1、在HTML文件的<code>&lt;input&gt;</code>或<code>&lt;textarea&gt;</code>标签中设置name属性和method属性<br/>
+2、在view中这么接收</p>
+
+<pre><code class="language-text">def foo(request):
+    a = request.GET[&#39;a&#39;]
+    b = request.POST[&#39;b&#39;]
+</code></pre>
+
+<h4 id="toc_7">（三）用cookie保存登录状态</h4>
+
+<p>cookie中最主要的部分当然是Name-Value键值对。<br/>
+Django对cookie有很好的支持，request对象的cookies属性是一个字典，包含了当前所有的cookie，可以用<code>if &#39;xxx&#39; in request.COOKIES</code>来判断cookie是否存在。response对象的set_cookie方法可以方便的保存cookie，以及设置失效时间。</p>
+
+<p>cookie处理的逻辑为：<br/>
+用户登录成功 -&gt; set_cookie<br/>
+用户退出登录 -&gt; delete_cookie<br/>
+用户请求需要登录的功能 -&gt; 检查cookie是否存在 <br/>
+-&gt; 若不存在，跳转到登录页面<br/>
+-&gt; 若存在，从cookie中读取出id, username</p>
+
+<h4 id="toc_8">（四）render与HttpResponseRedirect</h4>
+
+<p>render大概相当于刷新页面，浏览器地址栏上的地址不会改变；redirect相当于页面跳转，地址栏会发生变化。</p>
+
+<h4 id="toc_9">（五）引用静态文件</h4>
+
+<p>在编写Web前端代码时，经常要引入一些静态文件。例如，我使用了Bootstrap组件，就需要在Django项目中配置好静态文件的路径，然后再在HTML中引用。</p>
+
+<p>首先，在SportShop根目录下新建一个static文件夹，将js/css等文件分类放好。<br/>
+然后，在SportShop/settings.py中，增加一行</p>
+
+<pre><code class="language-text">STATIC_URL = &#39;/static/&#39;
+</code></pre>
+
+<p>在模板中引用静态文如下 </p>
+
+<pre><code class="language-text">&lt;!-- Bootstrap --&gt;
+    {% load static %}
+    &lt;link href=&quot;{% static &#39;css/bootstrap.min.css&#39; %}&quot; rel=&quot;stylesheet&quot;&gt;
+    &lt;link href=&quot;{% static &#39;css/dashboard.css&#39; %}&quot; rel=&quot;stylesheet&quot;&gt;
+</code></pre>
+
+<h4 id="toc_10">（六）存取媒体文件</h4>
+
+<p>既然是购物网站，就免不了上传图片。Django对于媒体文件的存取有严格的规则（坑了我好久），参考了不下十篇blog后，我才勉强算是解决了这一问题。由于大家的博客说法不一，所以我现在也没用一个特别准确的概念，只能列举一些可能导致Bug的点。</p>
+
+<p>1、首先在根目录下创建media文件夹<br/>
+2、settings.py中进行如下设置</p>
+
+<pre><code class="language-text">MEDIA_ROOT = &#39;media/&#39;
+MEDIA_URL = &#39;media/&#39;
+</code></pre>
+
+<p>3、对于需要引入media的模块，修改urls.py如下</p>
+
+<pre><code class="language-text">urlpatterns = [
+    ...
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+</code></pre>
+
+<p>目的应该是指明静态文件的路径（就是第2步设置的）</p>
+
+<p>4、<strong>最最重要的一点！！！写url的时候，最前面一定要加上斜线！</strong><br/>
+像这样，</p>
+
+<pre><code class="language-text">&lt;a href=&quot;/User/manager_login&quot;&gt;
+</code></pre>
+
+<p>不加反斜线的话，路径解析的时候会有问题</p>
+
+<pre><code class="language-text">~~ &lt;a href=&quot;User/manager_login&quot;&gt; ~~
+</code></pre>
+
+<p>这就涉及到了相对路径和绝对路径的问题了。Django文档中有如下说明</p>
+
+<blockquote>
+<p>Put strings here, like &quot;/home/html/django_templates&quot; or &quot;C:/www/django/templates&quot;.<br/>
+ Always use forward slashes, even on Windows.<br/>
+ Don&#39;t forget to use absolute paths, not relative paths.</p>
+</blockquote>
+
+<h4 id="toc_11">（七）上传图片</h4>
+
+<p>步骤如下，<br/>
+1、Model类中添加<code>models.ImageField()</code>字段<br/>
+2、HTML中添加<code>&lt;input&gt;</code>标签</p>
+
+<pre><code class="language-text">&lt;input type=&quot;file&quot; name=&quot;picture&quot;&gt;
+</code></pre>
+
+<p>3、在view中通过request.FILES[&#39;picture&#39;]获取template传过来的图片文件<br/>
+4、创建或修改model对象，然后save即可</p>
+
+<h4 id="toc_12">（八）关于数据一致性</h4>
+
+<ol>
+<li>貌似数据库事务（Transaction）是由MySQL负责处理的？我在对某个表中的数据进行批量修改时，当某一次操作发生了错误，好像是可以自动回滚的。。？不清楚是否需要再额外设置了。</li>
+<li>并发操作时的数据一致性。目前还没有考虑。</li>
+</ol>
+
+<h4 id="toc_13">（九）搜索</h4>
+
+<p>因为之前在学动态规划，看到了可以用dp实现Levenshtein，于是就尝试了一下写一个模糊搜索模块（模糊是挺模糊的，就是效果不咋样2333）<br/>
+总之练习了一下算法，还尝试了一下Jieba分词库，也算有点收获</p>
+
+<p>先写这些，有空再总结。</p>
+
+<h2 id="toc_14">关于效率</h2>
+
+<h4 id="toc_15">（一）分页功能的实现</h4>
+
+<p>在web后台开发中，分页功能是必不可少的，因为一旦数据量增大，如果不设分页，一次请求就会取出大量的数据，会严重影响性能。</p>
+
+<p>Django提供了Paginator类来帮助你管理分页的数据。Paginator的用法十分方便，视图函数长这样</p>
+
+<pre><code class="language-text">from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+def listing(request):
+    contact_list = Contacts.objects.all()
+    paginator = Paginator(contact_list, 25) # Show 25 contacts per page
+
+    page = request.GET.get(&#39;page&#39;)
+    try:
+        contacts = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        contacts = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        contacts = paginator.page(paginator.num_pages)
+
+    return render_to_response(&#39;list.html&#39;, {&quot;contacts&quot;: contacts})
+</code></pre>
+
+<p>初看这段代码时，我曾有过疑问：<code>Contacts.objects.all()</code>不是已经把所有记录都取出来了吗？？<br/>
+后来我查阅了QuerySet的文档，发现QuerySet是惰性执行的——创建查询集不会带来任何数据库的访问，只有在模板渲染的时候才会真正的查询。<br/>
+查看了Paginator的源码，发现page()方法返回的是一个切片，这样便不存在效率问题了。</p>
+
+<pre><code class="language-text">    def page(self, number):
+        &quot;&quot;&quot;Return a Page object for the given 1-based page number.&quot;&quot;&quot;
+        number = self.validate_number(number)
+        bottom = (number - 1) * self.per_page
+        top = bottom + self.per_page
+        if top + self.orphans &gt;= self.count:
+            top = self.count
+        return self._get_page(self.object_list[bottom:top], number, self)
+</code></pre>
+
+<h4 id="toc_16">（二）len() vs count()</h4>
+
+<p>当我们想获取QuerySet的大小时，很容易想到len()和count()这两种方式，但是这两种方式是有区别的，Django文档中有这样的注释：</p>
+
+<blockquote>
+<p>Note: If you only need to determine the number of records in the set (and don’t need the actual objects), it’s much more efficient to handle a count at the database level using SQL’s SELECT COUNT(*). Django provides a count() method for precisely this reason.</p>
+</blockquote>
+
+<p>也就是说，queryset.count()实际上执行的是SQL语句SELECT COUNT(*)，仅仅查询表有多少行；而len(queryset)执行的是SELECT语句。哪个效率更高不言而喻。</p>
+]]>
+    </content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[TensorFlow笔记（持续更新）]]></title>
+    <link href="http://forrest0503.github.io/14965491161776.html"/>
+    <updated>2017-06-04T12:05:16+08:00</updated>
+    <id>http://forrest0503.github.io/14965491161776.html</id>
+    <content type="html">
+<![CDATA[<h2 id="toc_0">从softmax到单隐含层的神经网络</h2>
+
+<h4 id="toc_1">1. 基本架构</h4>
+
+<p>在学习了用softmax回归对MNIST进行训练后，发现softmax的准确率只有91%左右，于是我考虑用单隐含层的神经网络进行改进。</p>
+
+<p>隐含层单元数为25，根据Andrew Ng老师给出的公式 </p>
+
+<blockquote>
+<p>sqrt(input_layer_size + output_layer_size) + C, C为常数，一般取10左右。</p>
+</blockquote>
+
+<p>后来经过测试，隐含层单元数在20-30这个范围内差别都不大。</p>
+
+<p>隐含层的激励函数我尝试了多种，发现使用Sigmoid函数会发生“梯度消失”现象，导致一开始梯度下降的异常缓慢。后来我尝试了ReLU作为激励函数，成功解决了梯度消失的问题。</p>
+
+<p>代价函数我尝试了两种：<br/>
+一种是softmax回归中用到的交叉熵</p>
+
+<pre><code class="language-text">cross_entropy = -tf.reduce_mean(y_*tf.log(y)) 
+</code></pre>
+
+<p>另一种是Andrew Ng的课程中使用的</p>
+
+<pre><code class="language-text">cross_entropy = -tf.reduce_mean(y_*tf.log(y) + (1-y_)*tf.log(1-y))
+</code></pre>
+
+<p>本以为后一种会更准确一些，然而实践证明差别不大。。。</p>
+
+<p>到此为止，训练的准确率还非常惨。。</p>
+
+<h4 id="toc_2">2. 优化</h4>
+
+<p>然而机智的我想到了随机初始化权重的方法（其实Andrew的课程里强调了很多次。。）</p>
+
+<p>随机初始化权重的方法有很多种，比如TensorFlow官方教程中讲到</p>
+
+<blockquote>
+<p>这个模型中的权重在初始化时应该加入少量的噪声来打破对称性以及避免0梯度。由于我们使用的是ReLU神经元，因此比较好的做法是用一个较小的正数来初始化偏置项，以避免神经元节点输出恒为0的问题（dead neurons）。</p>
+</blockquote>
+
+<p>我这里使用的是Andrew课程里使用的方法，具体公式见讲义。</p>
+
+<pre><code class="language-text">#随机初始化权重，大幅度提高智商！
+W1 = tf.Variable(tf.zeros([784, hidden_layer_size]))
+W1 = tf.Variable( tf.random_uniform([784,hidden_layer_size],minval=0,maxval=1,dtype=tf.float32,seed=None,name=None)  ) 
+epsilon = 1.0*math.sqrt(6)/math.sqrt(784+hidden_layer_size)
+W1 = W1 * 2 * epsilon - epsilon
+
+W2 = tf.Variable(tf.zeros([hidden_layer_size,10]))
+W2 = tf.Variable( tf.random_uniform([hidden_layer_size,10],minval=0,maxval=1,dtype=tf.float32,seed=None,name=None)  ) 
+epsilon = 1.0*math.sqrt(6)/math.sqrt(hidden_layer_size+10)
+W2 = W2 * 2 * epsilon - epsilon
+
+</code></pre>
+
+<p align="right">2017.6.1</p>
+
+<h2 id="toc_3">构建简单CNN</h2>
+
+<p>首先我要感慨一下，CNN训练的时间实在是长。。。。softmax几秒钟就完成的事，CNN要干几小时。</p>
+
+<p>根据Convolutional Neural Networks (LeNet)对一个双卷积池化层+隐层+SM层的网络来说：</p>
+
+<blockquote>
+<p>在 Core i7-2600K CPU @ 3.40GHz 上， 使用标志 ‘floatX=float32’：Optimization complete.<br/>
+Best validation score of 0.910000 % obtained at iteration 17800,with test<br/>
+performance 0.920000 %<br/>
+The code for file convolutional_mlp.py ran for 380.28m</p>
+
+<p>在 GeForce GTX 285上跑：Optimization complete.<br/>
+Best validation score of 0.910000 % obtained at iteration 15500,with test<br/>
+performance 0.930000 %<br/>
+The code for file convolutional_mlp.py ran for 46.76m</p>
+</blockquote>
+
+<p>GPU的速度大约是CPU的8-10倍。</p>
+]]>
+    </content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Andrew Ng机器学习课程总结]]></title>
+    <link href="http://forrest0503.github.io/14898046974856.html"/>
+    <updated>2017-03-18T10:38:17+08:00</updated>
+    <id>http://forrest0503.github.io/14898046974856.html</id>
+    <content type="html">
+<![CDATA[<p>最近刷完了Coursera上的机器学习课程，下面我会总结一下课程中所学到的知识点，同时也是对课程的复习。</p>
+
+<h3 id="toc_0">监督学习（Supervised learning）与非监督学习（Unsupervised Learning）</h3>
+
+<p>区别在于训练集是否被标记</p>
+
+<h3 id="toc_1">假设函数 Hypothesis</h3>
+
+<p>通过训练集和学习算法得到的模型，可以是线性的，也可以是非线性的。通过这个模型，我们可以对新的输入进行预测。</p>
+
+<h3 id="toc_2">代价函数 Cost Function</h3>
+
+<p>用来度量假设函数准确度的函数</p>
+
+<h3 id="toc_3">梯度下降 Gradient Descent</h3>
+
+<p>梯度下降法是最小化代价函数的常用方法之一，适用于很多算法，如线性回归、逻辑回顾、神经网络、SVM等。<br/>
+梯度可以看成代价函数对每个自变量的偏导数，在梯度下降算法中，每一次迭代时，一次性对所有的参数进行更新，其中α被称为学习速率。</p>
+
+<p><img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%884.12.23.png" alt="屏幕快照 2017-04-05 下午4.12.23"/></p>
+
+<h3 id="toc_4">线性回归</h3>
+
+<p>假设函数为线性函数，如：<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%884.18.32.png" alt="屏幕快照 2017-04-05 下午4.18.32"/></p>
+
+<p>向量化表示为：<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%884.22.19.png" alt="屏幕快照 2017-04-05 下午4.22.19"/></p>
+
+<h3 id="toc_5">特征缩放（feature scaling）和均值归一化（Mean Normalization）</h3>
+
+<p>特征缩放和均值归一化是常用的数据预处理方法，可以加快算法收敛的速度，几乎所有机器学习算法都要用到。<br/>
+均值归一化公式，其中u是xi的平均值，S是xi的取值范围（最大值减最小值）<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%884.23.49.png" alt="屏幕快照 2017-04-05 下午4.23.49"/></p>
+
+<h3 id="toc_6">正规方程（Normal Equation）</h3>
+
+<p>正规方程是另一种拟合线性回归模型的方法，其表达式为：<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%884.29.05.png" alt="屏幕快照 2017-04-05 下午4.29.05"/></p>
+
+<p>正规方程法与梯度下降法的不同：</p>
+
+<ol>
+<li>不需要迭代</li>
+<li>不需要选择学习速率α</li>
+<li>时间复杂度O (n3)，效率低</li>
+</ol>
+
+<h3 id="toc_7">逻辑回归 Logistic Regression</h3>
+
+<p>逻辑回归是一种典型的分类（Classification）算法。为了提高分类的准确度，我们需要引入非线性。引入非线性后的逻辑回归假设函数如下：<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%884.35.11.png" alt="屏幕快照 2017-04-05 下午4.35.11"/></p>
+
+<p>其中，g（z）为非线性函数“S型函数”（Sigmoid Function）；<br/>
+z函数称为决策边界（Decision Boundary），当z&gt;0时，h(x)&gt;0.5， 反之，<0.5<br/>
+我们规定，>0.5时代表正类，&lt;0.5时代表负类。<br/>
+注意:决策边界只与假设h的形式和theta的值有关,给定假设h和theta就可以得到决策边界</p>
+
+<p>定义代价函数如下：<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%884.40.10.png" alt="屏幕快照 2017-04-05 下午4.40.10"/></p>
+
+<p>梯度公式如下：<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%884.40.36.png" alt="屏幕快照 2017-04-05 下午4.40.36"/></p>
+
+<p>有了代价函数J和梯度grad，我们又可以使用梯度下降法啦：）</p>
+
+<h3 id="toc_8">正则化（Normalization）</h3>
+
+<p>在训练模型时，可能会出现过拟合（Overfitting）和欠拟合（Underfitting）现象，对应也可称作高方差（High Variance）和高偏差（High Bias）。</p>
+
+<p>为了减少过拟合，常用的一种方法叫做正则化，在假设函数后面加上一个正则化项：<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%884.46.13.png" alt="屏幕快照 2017-04-05 下午4.46.13"/></p>
+
+<p>注意：我们通常不正则化θ0。当过拟合的时候，我们可以通过增加λ来减少前面的θ的值。</p>
+
+<h3 id="toc_9">多类别分类器</h3>
+
+<p>对于只有两个类的分类问题，我们只需要一个决策边界就可以分出来，但是当有三个和三个以上类别的时候，一个决策边界显然不够，当有m个类时，我们通常构造m个分类器，每一个分类器是一个二分类分类器，分类的情况有两种：1.属于某个类 2.不属于某个类</p>
+
+<h3 id="toc_10">神经网络 Neural Network</h3>
+
+<p><img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%884.53.40.png" alt="屏幕快照 2017-04-05 下午4.53.40"/><br/>
+上图是最基本的神经网络模型，一般来说，神经网络包含一个输入层（input layer），一个输出层（output layer）和多个隐含层（hidden layer）。</p>
+
+<p>图中的a函数称为激励函数，通常是Sigmoid函数；输出函数h(x)的功能是，选出输出层各单元输出最大的那一个，将那个单元作为此次预测的结果。</p>
+
+<p>神经网络训练过程如下：</p>
+
+<h5 id="toc_11">1. 正向传播计算代价</h5>
+
+<p><img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.02.23.png" alt="屏幕快照 2017-04-05 下午5.02.23"/></p>
+
+<h5 id="toc_12">2. 反向传播计算梯度，并优化权重</h5>
+
+<p>假设训练集为(x1,y1),...,(x(m),y(m)) <br/>
+设置Δ(l)ij=0,其中l为层，i为l-1层的节点，j为l层的节点</p>
+
+<p>对于训练样本t = 1 to m：</p>
+
+<ol>
+<li>令a1 = xt</li>
+<li>执行向前传播算法计算出al （l=2, 3, ... L)</li>
+<li>deltaL = aL - yt</li>
+<li>计算deltaL-1, deltaL-2, ...delta2</li>
+<li><img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.11.46.png" alt="屏幕快照 2017-04-05 下午5.11.46"/></li>
+</ol>
+
+<p>最后，权重的偏导数（即梯度）为：<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.12.46.png" alt="屏幕快照 2017-04-05 下午5.12.46"/></p>
+
+<h3 id="toc_13">模型评估</h3>
+
+<p>我们通常把样本集合按6:2:2的比例分为训练集（Training Set）、交叉验证集（Cross Validation Set）和测试集（Test Set）<br/>
+训练集用来训练，验证机用来调整模型，测试集用来最终评估模型。</p>
+
+<p>以下是几种常用评估方法：</p>
+
+<h5 id="toc_14">多项式指数</h5>
+
+<p><img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.17.29.png" alt="屏幕快照 2017-04-05 下午5.17.29"/><br/>
+过拟合：Jtrain很小，Jcv很大<br/>
+欠拟合：Jtrain和Jcv都很大</p>
+
+<h5 id="toc_15">lambda曲线</h5>
+
+<p>正则化后，横轴为λ,纵轴为不带正则化的代价函数，通过绘制训练集和验证集来分析高偏差和高方差情况。<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.19.41.png" alt="屏幕快照 2017-04-05 下午5.19.41"/><br/>
+从上图可以看到，随着λ增加，训练集（蓝线）从高方差到高偏差，而验证集（绿色）从高方差-低方差-高偏差。</p>
+
+<h5 id="toc_16">学习曲线（Learning Curve）</h5>
+
+<p>横轴为样本数量m，纵轴为不带正则化的代价函数，同样的需要绘制训练集和验证集来分析高偏差和高方差情况。<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.22.02.png" alt="屏幕快照 2017-04-05 下午5.22.02"/><br/>
+上图是高偏差情况<strong>（Jtrain和Jcv都很大）</strong>，随着样本数量的增加，训练集和验证集趋于稳定并且相差不大。这种情况，盲目的增加样本数量是起不来作用的。</p>
+
+<p><img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.23.19.png" alt="屏幕快照 2017-04-05 下午5.23.19"/><br/>
+上图是高方差的情况<strong>（Jtrain小，Jcv大）</strong>，随着样本数量的增加，训练集和验证集趋于稳定但是相差较大。这种情况，增加样本数量是能够减少误差。</p>
+
+<h3 id="toc_17">处理过拟合和欠拟合的方法</h3>
+
+<p><img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.24.29.png" alt="屏幕快照 2017-04-05 下午5.24.29"/></p>
+
+<p><img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.25.15.png" alt="屏幕快照 2017-04-05 下午5.25.15"/></p>
+
+<p><img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.25.25.png" alt="屏幕快照 2017-04-05 下午5.25.25"/></p>
+
+<h3 id="toc_18">样本偏斜（Skewed Data）</h3>
+
+<p>样本偏斜是指样本分布不均匀，负类比正类多太多，比如训练垃圾邮件分类器时，1000个训练样本中只有10个是垃圾邮件，这样的样本就称为样本偏斜（skewed）。<br/>
+对于样本偏斜的情况，上述的方法就不能很好地评估模型了，原因是：假设你总是预测y = 0，那么错误率最大也只有0.01（只有那10个垃圾邮件被错误分类了）。</p>
+
+<h3 id="toc_19">单值分析</h3>
+
+<p>因此，我们引入了查准率（precision）和召回率（recall）以及F1分数的概念。<br/>
+设tp（true positive)=正类and预测为正类的数量， <br/>
+fp（false positive）=负类and预测为正类的数量， <br/>
+fn（false nagetive）=正类and预测为负类的数量。</p>
+
+<p>查准率 P=tp/(tp+fp) <br/>
+召回率 R=tp/(tp+fn)</p>
+
+<p>一个系统P值和R值不可能同时很大。举个例子，logistics回归，我们把0.5阀值设置的大点，改为0.7，那么tp减少，fp减少，fn增大，那我们的P增大，R减小，也就是说我们预测的更准确了。反之，R高，P低。</p>
+
+<p>通常我们使用它们的调和平均数（即F1 Score）来衡量，即F = 2(P*R)/(P+R) , F值大，较好。</p>
+
+<h3 id="toc_20">支持向量机 SVM</h3>
+
+<p>支持向量机与Logistics回归相似，但SVM引入了核函数的概念。<br/>
+核函数可以看做相似度（Similarity）<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.37.52.png" alt="屏幕快照 2017-04-05 下午5.37.52"/><br/>
+样本空间上有三个点l1, l2, l3，对于任意给出的x，定义相似度为：<br/>
+f1 = Similarity(x, l1) = exp(-(||x - l1||<sup>2)</sup> / 2<em>σ<sup>2</sup> )<br/>
+f2 = Similarity(x, l2) = exp(-(||x - l2||<sup>2)</sup> / 2</em>σ<sup>2</sup> )<br/>
+f3 = Similarity(x, l3) = exp(-(||x - l3||<sup>2)</sup> / 2*σ<sup>2</sup> )</p>
+
+<p>其中exp(-(||x - l1||<sup>2)</sup> / 2*σ<sup>2</sup> )被称为高斯核（Gaussian Kernal），参数σ越小，变化越快，σ越大，变化越慢</p>
+
+<h3 id="toc_21">K-means算法</h3>
+
+<p>k-means算法是一种聚类算法，大体上的意思是：随机初始化K个聚点，遍历每个样本点，计算其属于哪个聚点，这样就分出了K个群，对每个群再计算每个群的聚点，然后重复这个过程，直到收敛。</p>
+
+<p>Repeat {<br/>
+    for = 1 to m<br/>
+    ci := index (from 1 to K) of cluster centroid closest to xi<br/>
+    for = 1 to K<br/>
+    uk := average (mean) of points assigned to cluster k<br/>
+}</p>
+
+<p>代价函数为：<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.50.30.png" alt="屏幕快照 2017-04-05 下午5.50.30"/><br/>
+为了避免局部最优解，通常要多次运行K-means算法，选出代价最小的那一次，idx记得要随机初始化。</p>
+
+<h3 id="toc_22">PCA 主成分分析</h3>
+
+<p>Principal Component Analysis(PCA), 主成分析法。我们主要使用这个方法来降低训练集的维度（Dimension Reduction）。</p>
+
+<p>数学原理我还不太理解，大概是和线性代数中的线性变换有关，用线性相关的矩阵去乘训练集？？</p>
+
+<h3 id="toc_23">异常检测 Anomaly Detection</h3>
+
+<p>多元高斯模型概率分布如下：<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.56.45.png" alt="屏幕快照 2017-04-05 下午5.56.45"/></p>
+
+<p>对所有的特征建立多元高斯模型。预测一个样本时，只需要带入到上面的公式，当计算出的值小于一个阈值ϵ,我们认为这个样本是异常的。<br/>
+缺点：m&gt;n或者∑必须是非奇异矩阵。</p>
+
+<h4 id="toc_24">如何选阈值ϵ？</h4>
+
+<p>利用F1 Score！<br/>
+从最小的概率开始，每次迭代增加一个很小的步长，并计算F1 Score。</p>
+
+<h3 id="toc_25">推荐系统 Recommend System</h3>
+
+<h4 id="toc_26">基于内容的推荐 （Content-Based recommendations）</h4>
+
+<p>预先定义好内容的特征向量，并让用户去设置自己的喜好特征向量</p>
+
+<h5 id="toc_27">协同过滤算法（Collaborative filtering）</h5>
+
+<p>同时优化内容特征向量和用户特征向量</p>
+
+<h3 id="toc_28">大规模机器学习</h3>
+
+<p>对于一些机器学习算法，当训练集十分庞大时，可以将一部分任务分散到多台机器上同时进行，最后在进行求和。<br/>
+比如线性回归、逻辑回归以及神经网络的代价函数的计算，可以将任务分给多台机器，最后求和即可。</p>
+
+<h3 id="toc_29">机器学习流水线</h3>
+
+<p>Photo OCR的例子：</p>
+
+<p><img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%886.08.01.png" alt="屏幕快照 2017-04-05 下午6.08.01"/></p>
+
+<p>对于复杂的机器学习任务，通常要分为几个模块来进行，不同的模块由不同的人来负责。</p>
+
+<h4 id="toc_30">上限分析 Ceiling Analysis</h4>
+
+<p>我们先假定流水线的第一个模块准确率为100%，然后检查最终的准确率提高了多少，然后再假定第二个模块准确率也是100%，以此类推，最终可以判断出哪些模块还有改进的空间，哪些模块则不必再费力去改进了。<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%886.12.07.png" alt="屏幕快照 2017-04-05 下午6.12.07"/></p>
+]]>
+    </content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[GCD遇到的的一些坑]]></title>
+    <link href="http://forrest0503.github.io/14772238190367.html"/>
+    <updated>2016-10-23T19:56:59+08:00</updated>
+    <id>http://forrest0503.github.io/14772238190367.html</id>
+    <content type="html">
+<![CDATA[<ol>
+<li>在项目中一般是将耗时操作放在后台线程，在后台线程执行完毕后，在主线程刷新 UI 界面。<br/>
+因此，可以在全局队列（串行队列）中异步执行耗时的代码，然后串行刷新UI。</li>
+</ol>
+
+<pre><code class="language-text">// 获取一个全局队列， 在全局队列异步操作
+        DispatchQueue.global().async {
+            
+            Thread.sleep(forTimeInterval: TimeInterval(3)) //此处是耗时的代码
+            NotificationCenter.default.post(name: NSNotification.Name(&quot;ExamDidLoad&quot;), object: nil) //注意，ExamDidLoad是对UI的操作，一定要跳到主线程处理！！！
+            
+            // 主线程异步执行（主线程同步可能会死锁），与前面的操作是串行关系
+            DispatchQueue.main.async(execute: {
+                
+                UIView.animate(withDuration: 3) {
+                    self.view.alpha = 0.5
+                }
+                
+            })
+        }
+</code></pre>
+
+<p>要注意的是，在多线程程序中，通知总是在发送通知者的线程中调用。下面是官方文档中的说法：</p>
+
+<blockquote>
+<p>In a multithreaded application, notifications are always delivered in the thread in which the notification was posted, which may not be the same thread in which an observer registered itself.</p>
+</blockquote>
+
+<p>因此，当我们在子线程中发送通知，让通知接受者进行UI操作时，就要十分小心：UI操作必须在主线程执行，否则容易崩溃！</p>
+]]>
+    </content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[关于设置frame]]></title>
+    <link href="http://forrest0503.github.io/14767792485747.html"/>
+    <updated>2016-10-18T16:27:28+08:00</updated>
+    <id>http://forrest0503.github.io/14767792485747.html</id>
+    <content type="html">
+<![CDATA[<p>通过frame.size.width/height 可以修改frame的宽高</p>
+]]>
+    </content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[关于swift3.0的异常捕捉]]></title>
+    <link href="http://forrest0503.github.io/14749638448482.html"/>
+    <updated>2016-09-27T16:10:44+08:00</updated>
+    <id>http://forrest0503.github.io/14749638448482.html</id>
+    <content type="html">
+<![CDATA[<p>假设有以下可能抛出异常的代码</p>
+
+<pre><code class="language-text">enum ThrowableError : ErrorProtocol { case BadError }
+
+func doSomething() throws -&gt; String {
+    if everythingIsFine {
+        return &quot;Everything is ok&quot;
+    } else {
+        throw ThrowableError.BadError
+    }
+}
+</code></pre>
+
+<p>在swift3.0中，可以用ErrorProtocol类型来代表错误。（swift2.2中是ErrorType）</p>
+
+<p>异常捕捉有两种形式：do-catch和try？</p>
+
+<h4 id="toc_0">do-catch方式</h4>
+
+<p>在do代码块中，用try来标记可能抛出异常的语句</p>
+
+<pre><code class="language-text">do {
+     let result = try doSomething()
+     defer {
+        //即使doSomething抛出了异常，这里的地方也会在do作用域结束的时候被调用
+     }
+}catch {
+     print(error)
+}
+</code></pre>
+
+<blockquote>
+<p>小技巧：defer 关键字可以用来包裹一段代码，这个代码块将会在<em>当前作用域结束的时候</em>被调用。这通常被用来对当前的代码进行一些清理工作，比如关闭打开的文件等。可以在同一个作用域中指定多个 defer 代码块，在当前作用域结束时，它们会以相反的顺序被调用，即先定义的后执行，后定义的先执行。</p>
+</blockquote>
+
+<p>或者，你还可以继续把这个异常抛给别人- -</p>
+
+<pre><code class="language-text">func doSomeOtherThing() throws -&gt; Void {    
+    // 不包含do-catch
+    // 将异常抛给别人
+    let result = try doSomething()
+}
+</code></pre>
+
+<h4 id="toc_1">try? or try!</h4>
+
+<p>执行try？语句时，结果有两种情况：如果doSomething()抛出了异常，则返回nil；如果一切正常，则返回一个包裹在optional中的result。</p>
+
+<p>可以用if let处理result</p>
+
+<pre><code class="language-text">if let result = try? doSomething() {
+    // 做点什么
+} else {
+    // doSomething()抛出了异常
+}
+</code></pre>
+
+<p>对于这种情况，可以用guard关键字进行更优雅的处理。<br/>
+guard的介绍如下：</p>
+
+<blockquote>
+<p>与if语句相同的是，guard也是基于一个表达式的布尔值去判断一段代码是否该被执行。与if语句不同的是，guard只有在条件不满足的时候才会执行这段代码。你可以把guard近似的看做是Assert，但是你可以优雅的退出而非崩溃。</p>
+</blockquote>
+
+<p>于是，上面的代码可以改写为</p>
+
+<pre><code class="language-text">guard let result = try? doSomething() else {
+    // doSomething()抛出了异常
+    return
+}
+// 做点什么
+</code></pre>
+
+<p>我认为，用guard语句的好处在于，核心的代码（也就是你真正要做的事）是放在判断语句外面的，这就意味着在阅读核心代码之前，不需要读一大堆的判断条件，这样就大大地增强了可读性。</p>
+
+<p>另外，有时会用到try！语句，来避免result又被包裹到一个optional中，当然，只有当你确定该条语句绝对绝对不会抛出异常时，才能这么用！别问我怎么知道的。。。</p>
+]]>
+    </content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Alamofire请求路由]]></title>
+    <link href="http://forrest0503.github.io/14749638298188.html"/>
+    <updated>2016-09-27T16:10:29+08:00</updated>
+    <id>http://forrest0503.github.io/14749638298188.html</id>
+    <content type="html">
+<![CDATA[<p>在Alamofire中，请求路由是遵循URLRequestConvertible协议的结构体，</p>
+
+<p>当有枚举类型采用该协议的时候，该类型就必须含有一个名为URLRequest的NSURLRequest类型变量：</p>
+
+<pre><code class="language-text">enum Router: URLRequestConvertible {
+    ...
+    var URLRequest: NSURLRequest
+｝
+</code></pre>
+
+<p>路由中应该有几个静态变量，用于表示URL中不变的部分：</p>
+
+<pre><code class="language-text">enum Router: URLRequestConvertible {
+    static let baseUrlString = &quot;https://api.xxx.com&quot;
+    ...
+    var URLRequest: NSURLRequest
+｝
+</code></pre>
+
+<p>定义请求类型：</p>
+
+<pre><code class="language-text">enum Router: URLRequestConvertible {
+    static let baseUrlString = &quot;https://api.xxx.com&quot;
+    //Post或者GET
+    var method: Alamofire.Method {
+        switch self {
+        default:
+            return .POST
+        }
+    }
+    ...
+    var URLRequest: NSURLRequest
+｝
+</code></pre>
+
+<p>根据不同的请求，设置枚举成员和关联值：</p>
+
+<pre><code class="language-text">enum Router: URLRequestConvertible {
+    static let baseUrlString = &quot;https://api.xxx.com&quot;
+    
+    case Signin(String, String)
+    case Articles(String, Int)
+    ...
+    var URLRequest: NSURLRequest
+｝
+</code></pre>
+
+<p>完善URLRequest：</p>
+
+<pre><code class="language-text">enum Router: URLRequestConvertible {
+    static let baseUrlString = &quot;https://api.xxx.com&quot;
+    
+    case Signin(String, String)
+    case Articles(String, Int)
+    ...
+    
+    var URLRequest: NSMutableURLRequest {
+        let result: (path: String, parameters: [String: AnyObject]) = {
+            switch self {
+            case .Signin(let username, let password):
+                let params = [&quot;username&quot;: username, &quot;password&quot;: password]
+                return (&quot;/signin&quot;, params)
+            case .Articles(let type, let page):
+                let params = [&quot;article_type&quot;: type, &quot;count&quot;: 10, &quot;page&quot;: page]
+                return (&quot;/listArticleByType&quot;, params)
+            }
+        }()
+        ...
+    }
+｝
+</code></pre>
+
+<p>封装成完整的请求：</p>
+
+<pre><code class="language-text">enum Router: URLRequestConvertible {
+    
+    ...
+    var URLRequest: NSURLRequest = {
+        let (path: String, params: [String: AnyObject]) = {
+            ...
+        }()
+    
+        let URL = NSURL(string: Router.baseURLString)
+        let URLRequest = NSMutableURLRequest(URL:       URL!.URLByAppendingPathComponent(result.path))
+        let encoding = Alamofire.ParameterEncoding.URL
+        
+        return encoding.encode(URLRequest, parameters: result.parameters).0
+    }
+｝
+</code></pre>
+
+<p>完整代码：</p>
+
+<pre><code class="language-text">enum Router: URLRequestConvertible {
+    static let baseUrlString = &quot;https://api.xxx.com&quot;
+    //Post或者GET
+    var method: Alamofire.Method {
+        switch self {
+        default:
+            return .POST
+        }
+    }
+    
+    case Signin(String, String)
+    case Articles(String, Int)
+    
+    var URLRequest: NSMutableURLRequest = {
+        let result: (path: String, parameters: [String: AnyObject]) = {
+            switch self {
+            case .Signin(let username, let password):
+                let params = [&quot;username&quot;: username, &quot;password&quot;: password]
+                return (&quot;/signin&quot;, params)
+            case .Articles(let type, let page):
+                let params = [&quot;article_type&quot;: type, &quot;count&quot;: 10, &quot;page&quot;: page]
+                return (&quot;/listArticleByType&quot;, params)
+            }
+        }()
+        let URL = NSURL(string: Router.baseURLString)
+        let URLRequest = NSMutableURLRequest(URL:       URL!.URLByAppendingPathComponent(result.path))
+        let encoding = Alamofire.ParameterEncoding.URL
+        
+        return encoding.encode(URLRequest, parameters: result.parameters).0
+    }
+｝
+</code></pre>
+
+<p>然后在用到请求的地方像这样调用</p>
+
+<pre><code class="language-text">Alamofire.request(Router.Signin(&quot;jasonc&quot;, &quot;123456&quot;)).responseJSON { 
+    ...
+}
+</code></pre>
+
+<p>相当于发送了这样的请求<br/>
+<code>https://api.xxx.com/singin?username=jasonc&amp;password=12345</code></p>
+
+<p>这样，在上面的enum里，可以调用不同的case来实现请求不同的接口，比起直接在request里写地址 维护起来要方便许多。</p>
+]]>
+    </content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[button title]]></title>
+    <link href="http://forrest0503.github.io/14715721328799.html"/>
+    <updated>2016-08-19T10:02:12+08:00</updated>
+    <id>http://forrest0503.github.io/14715721328799.html</id>
+    <content type="html">
+<![CDATA[<p>设置UIButton上字体的颜色设置UIButton上字体的颜色，不是用：<br/>
+[btn.titleLabel setTextColor:[UIColorblackColor]];<br/>
+btn.titleLabel.textColor=[UIColor redColor];<br/>
+而是用：<br/>
+[btn setTitleColor:[UIColor blackColor]forState:UIControlStateNormal];</p>
+]]>
+    </content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[SWIFT 快速简易收键盘]]></title>
+    <link href="http://forrest0503.github.io/14715229415488.html"/>
+    <updated>2016-08-18T20:22:21+08:00</updated>
+    <id>http://forrest0503.github.io/14715229415488.html</id>
+    <content type="html">
+<![CDATA[<p>override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {<br/>
+        textfield.resignFirstResponder()<br/>
+    }<br/>
+只要触摸textfield以外的地方键盘都会收起来 </p>
+]]>
+    </content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[UIKit动画]]></title>
+    <link href="http://forrest0503.github.io/14687337444814.html"/>
+    <updated>2016-07-17T13:35:44+08:00</updated>
+    <id>http://forrest0503.github.io/14687337444814.html</id>
+    <content type="html">
+<![CDATA[<ol>
+<li>若想给hidden属性加动画，可以先让空间的alpha逐渐变到0，然后突然一下子hidden = true。。。</li>
+</ol>
+]]>
+    </content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[一些关于Storyboard的基础知识]]></title>
+    <link href="http://forrest0503.github.io/14632192330033.html"/>
+    <updated>2016-05-14T17:47:13+08:00</updated>
+    <id>http://forrest0503.github.io/14632192330033.html</id>
+    <content type="html">
+<![CDATA[<ul>
+<li>在Pin的Spacing to nearest neighbor(约束到最近部件)部分，Xcode 6新增了Constrain to margins(约束到边缘)复选框，如果勾选的话会有一段间距。</li>
+<li>在涉及到自适应布局的设计的时候，很重要的一点是，首先你需要创建一个基本的布局，然后在为每一个特殊的size class去调整你需要的size class。这里，不是要把每一个size class视为一个全新的东西去从头设计。你可以把一个自适应布局，想象成是一个树状的层次结构，在这个层次中，你可以把所有通用的设计放在父级节点中，然后把需要单独处理的部分放到子级的size class中。</li>
+<li>点击Font左侧的+号按钮，在弹出的菜单中选择对应的size class 来重写字号。 选择Compact Width -&gt; Any Height。这个操作会创建第二个字体选择器，用于应用特殊的size class。</li>
+</ul>
+]]>
+    </content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Xcode调试方法总结（未完待续）]]></title>
+    <link href="http://forrest0503.github.io/14576100099684.html"/>
+    <updated>2016-03-10T19:40:09+08:00</updated>
+    <id>http://forrest0503.github.io/14576100099684.html</id>
+    <content type="html">
+<![CDATA[<ul>
+<li>如果程序在运行时出现不明error或者warning，可以程序入口处设置断点，开始调试后, 不停按F7（step into），直到控制台出现错误信息。<br/>
+这样就可以找到出错的位置啦～<br/></li>
+</ul>
+]]>
+    </content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[设置UITextView的行间距]]></title>
+    <link href="http://forrest0503.github.io/14576061308650.html"/>
+    <updated>2016-03-10T18:35:30+08:00</updated>
+    <id>http://forrest0503.github.io/14576061308650.html</id>
+    <content type="html">
+<![CDATA[<p>let paragraphStyle: NSMutableParagraphStyle = NSMutableParagraphStyle()<br/>
+        paragraphStyle.lineSpacing = 20<br/>
+        // 字体的行间距<br/>
+        let attributes: [String : AnyObject] = [NSFontAttributeName: UIFont.systemFontOfSize(15), NSParagraphStyleAttributeName: paragraphStyle]<br/>
+        contentView.attributedText = NSAttributedString(string: contentView.text!, attributes: attributes)</p>
+]]>
+    </content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[自己总结的一些 Markdown Syntax]]></title>
+    <link href="http://forrest0503.github.io/14509285368647.html"/>
+    <updated>2015-12-24T11:42:16+08:00</updated>
+    <id>http://forrest0503.github.io/14509285368647.html</id>
+    <content type="html">
+<![CDATA[<ul>
+<li><p>回车:  </p>
+<blockquote>
+<p>两个以上的空格加回车  </p>
+</blockquote></li>
+<li><p>文字加深:</p>
+<blockquote>
+<p>在文字两侧加上 `</p>
+</blockquote></li>
+<li><p>无序列表:  </p>
+<blockquote>
+<p>在文字前面加 <code>-空格</code>    </p>
+</blockquote></li>
+<li><p>有序列表:  </p>
+<blockquote>
+<p>在文字前面加 <code>数字.空格</code></p>
+</blockquote></li>
+<li><p>列表前面加<code>Tab</code>或者<code>嵌入引用</code>可以实现缩进</p>
+<blockquote>
+<ol>
+<li>list</li>
+<li>list</li>
+</ol>
+</blockquote></li>
+<li><p>引用文章:  </p>
+<blockquote>
+<p>在文字前面加 <code>&gt;</code></p>
+</blockquote></li>
+<li><p>代码框:  </p>
+<blockquote>
+<p>在文字的上方和下方加入 ```<br/>
+ 等价于在文字前加 <em>Tab</em></p>
+</blockquote></li>
+<li><p>分割线:   </p>
+<blockquote>
+<p>连续输入3个星号 <code>***</code></p>
+</blockquote></li>
+<li><p>插入表格</p></li>
+<li><pre><code class="language-text">123|321
+---|---
+</code></pre>
+<blockquote>
+<table>
+<thead>
+<tr>
+<th>123</th>
+<th>321</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>123</td>
+<td>321</td>
+</tr>
+</tbody>
+</table>
+</blockquote></li>
+</ul>
+]]>
+    </content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[objective-c 协议和委托 (重点基础知识）]]></title>
+    <link href="http://forrest0503.github.io/14576053421912.html"/>
+    <updated>2016-03-10T18:22:22+08:00</updated>
+    <id>http://forrest0503.github.io/14576053421912.html</id>
+    <content type="html">
+<![CDATA[<p>objective-c protocol delegate</p>
+
+<p><strong>protocol-协议，就是使用了这个协议后就要按照这个协议来办事，协议要求实现的方法就一定要实现。 <br/>
+delegate-委托，顾名思义就是委托别人办事，就是当一件事情发生后，自己不处理，让别人来处理。</strong></p>
+
+<p>当一个A view 里面包含了B view<br/>
+b view需要修改a view界面，那么这个时候就需要用到委托了。<br/>
+需要几个步骤<br/>
+1。首先定一个协议<br/>
+2。a view实现协议中的方法<br/>
+3。b view设置一个委托变量<br/>
+4。把b view的委托变量设置成a view，意思就是 ，b view委托a view办事情。<br/>
+5。事件发生后，用委托变量调用a view中的协议方法</p>
+
+<p><u>delegate(委托)是iPhone开发中一个非常重要的知识点，感觉类似c语言的callback（回调函数）或是java中的Interface（接口）。</u></p>
+]]>
+    </content>
+  </entry>
+  
+</feed>

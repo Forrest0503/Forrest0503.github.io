@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+         Andrew Ng机器学习课程总结 - 咕噜灵波 
+    </title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+
+    <!-- 魔改部分 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="asset/style.css">
+
+    <link rel="stylesheet" type="text/css" href="asset/cuckoo.css">
+    <link rel="stylesheet" type="text/css" href="asset/main.css">
+    <link rel="stylesheet" type="text/css" href="asset/atom-one-light.css">
+
+
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="咕噜灵波">
+
+    <script src="asset/highlight.pack.js"></script>
+    <!--    <script>hljs.initHighlightingOnLoad();</script>-->
+</head>
+
+<body>
+    <header class="site-header cuckoo">
+
+        <div class="wrapper">
+            <a class="site-title" href="index.html">咕噜灵波</a>
+            <nav class="site-nav">
+                <a href="#" class="menu-icon">
+                    <svg viewBox="0 0 18 15">
+                        <path fill="#424242"
+                            d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z">
+                        </path>
+                        <path fill="#424242"
+                            d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z">
+                        </path>
+                        <path fill="#424242"
+                            d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z">
+                        </path>
+                    </svg>
+                </a>
+                <div class="trigger">
+                    
+                    <a class="page-link" href="index.html">Home</a>
+                    
+                    <a class="page-link" href="archives.html">Archives</a>
+                    
+                </div>
+            </nav>
+        </div>
+    </header>
+
+
+
+    <script src="./asset/live2d/autoload.js"></script>
+</body>
+
+</html> <div class="page-content cuckoo">
+
+    <div class="pattern-center ">
+        <div id="surpriseImg" class="pattern-attachment-img"> 
+            <!-- <img src="suprizeImg#lazyload-blur" data-src="suprizeImg" class="lazyload"
+                onerror="imgError(this,3)" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;"> -->
+        </div>
+        <header class="pattern-header ">
+            <h1 class="entry-title">Andrew Ng机器学习课程总结</h1>
+        </header>
+    </div>
+
+    <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+            <header class="post-header">
+                <!-- <h1 class="post-title" itemprop="name headline">Andrew Ng机器学习课程总结</h1> -->
+                <div class="post-description">
+                    
+                </div>
+            </header>
+            <div class="post-content" itemprop="articleBody">
+                <p>最近刷完了Coursera上的机器学习课程，下面我会总结一下课程中所学到的知识点，同时也是对课程的复习。</p>
+
+<h3 id="toc_0">监督学习（Supervised learning）与非监督学习（Unsupervised Learning）</h3>
+
+<p>区别在于训练集是否被标记</p>
+
+<h3 id="toc_1">假设函数 Hypothesis</h3>
+
+<p>通过训练集和学习算法得到的模型，可以是线性的，也可以是非线性的。通过这个模型，我们可以对新的输入进行预测。</p>
+
+<h3 id="toc_2">代价函数 Cost Function</h3>
+
+<p>用来度量假设函数准确度的函数</p>
+
+<h3 id="toc_3">梯度下降 Gradient Descent</h3>
+
+<p>梯度下降法是最小化代价函数的常用方法之一，适用于很多算法，如线性回归、逻辑回顾、神经网络、SVM等。<br/>
+梯度可以看成代价函数对每个自变量的偏导数，在梯度下降算法中，每一次迭代时，一次性对所有的参数进行更新，其中α被称为学习速率。</p>
+
+<p><img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%884.12.23.png" alt="屏幕快照 2017-04-05 下午4.12.23"/></p>
+
+<h3 id="toc_4">线性回归</h3>
+
+<p>假设函数为线性函数，如：<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%884.18.32.png" alt="屏幕快照 2017-04-05 下午4.18.32"/></p>
+
+<p>向量化表示为：<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%884.22.19.png" alt="屏幕快照 2017-04-05 下午4.22.19"/></p>
+
+<h3 id="toc_5">特征缩放（feature scaling）和均值归一化（Mean Normalization）</h3>
+
+<p>特征缩放和均值归一化是常用的数据预处理方法，可以加快算法收敛的速度，几乎所有机器学习算法都要用到。<br/>
+均值归一化公式，其中u是xi的平均值，S是xi的取值范围（最大值减最小值）<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%884.23.49.png" alt="屏幕快照 2017-04-05 下午4.23.49"/></p>
+
+<h3 id="toc_6">正规方程（Normal Equation）</h3>
+
+<p>正规方程是另一种拟合线性回归模型的方法，其表达式为：<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%884.29.05.png" alt="屏幕快照 2017-04-05 下午4.29.05"/></p>
+
+<p>正规方程法与梯度下降法的不同：</p>
+
+<ol>
+<li>不需要迭代</li>
+<li>不需要选择学习速率α</li>
+<li>时间复杂度O (n3)，效率低</li>
+</ol>
+
+<h3 id="toc_7">逻辑回归 Logistic Regression</h3>
+
+<p>逻辑回归是一种典型的分类（Classification）算法。为了提高分类的准确度，我们需要引入非线性。引入非线性后的逻辑回归假设函数如下：<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%884.35.11.png" alt="屏幕快照 2017-04-05 下午4.35.11"/></p>
+
+<p>其中，g（z）为非线性函数“S型函数”（Sigmoid Function）；<br/>
+z函数称为决策边界（Decision Boundary），当z&gt;0时，h(x)&gt;0.5， 反之，<0.5<br/>
+我们规定，>0.5时代表正类，&lt;0.5时代表负类。<br/>
+注意:决策边界只与假设h的形式和theta的值有关,给定假设h和theta就可以得到决策边界</p>
+
+<p>定义代价函数如下：<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%884.40.10.png" alt="屏幕快照 2017-04-05 下午4.40.10"/></p>
+
+<p>梯度公式如下：<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%884.40.36.png" alt="屏幕快照 2017-04-05 下午4.40.36"/></p>
+
+<p>有了代价函数J和梯度grad，我们又可以使用梯度下降法啦：）</p>
+
+<h3 id="toc_8">正则化（Normalization）</h3>
+
+<p>在训练模型时，可能会出现过拟合（Overfitting）和欠拟合（Underfitting）现象，对应也可称作高方差（High Variance）和高偏差（High Bias）。</p>
+
+<p>为了减少过拟合，常用的一种方法叫做正则化，在假设函数后面加上一个正则化项：<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%884.46.13.png" alt="屏幕快照 2017-04-05 下午4.46.13"/></p>
+
+<p>注意：我们通常不正则化θ0。当过拟合的时候，我们可以通过增加λ来减少前面的θ的值。</p>
+
+<h3 id="toc_9">多类别分类器</h3>
+
+<p>对于只有两个类的分类问题，我们只需要一个决策边界就可以分出来，但是当有三个和三个以上类别的时候，一个决策边界显然不够，当有m个类时，我们通常构造m个分类器，每一个分类器是一个二分类分类器，分类的情况有两种：1.属于某个类 2.不属于某个类</p>
+
+<h3 id="toc_10">神经网络 Neural Network</h3>
+
+<p><img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%884.53.40.png" alt="屏幕快照 2017-04-05 下午4.53.40"/><br/>
+上图是最基本的神经网络模型，一般来说，神经网络包含一个输入层（input layer），一个输出层（output layer）和多个隐含层（hidden layer）。</p>
+
+<p>图中的a函数称为激励函数，通常是Sigmoid函数；输出函数h(x)的功能是，选出输出层各单元输出最大的那一个，将那个单元作为此次预测的结果。</p>
+
+<p>神经网络训练过程如下：</p>
+
+<h5 id="toc_11">1. 正向传播计算代价</h5>
+
+<p><img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.02.23.png" alt="屏幕快照 2017-04-05 下午5.02.23"/></p>
+
+<h5 id="toc_12">2. 反向传播计算梯度，并优化权重</h5>
+
+<p>假设训练集为(x1,y1),...,(x(m),y(m)) <br/>
+设置Δ(l)ij=0,其中l为层，i为l-1层的节点，j为l层的节点</p>
+
+<p>对于训练样本t = 1 to m：</p>
+
+<ol>
+<li>令a1 = xt</li>
+<li>执行向前传播算法计算出al （l=2, 3, ... L)</li>
+<li>deltaL = aL - yt</li>
+<li>计算deltaL-1, deltaL-2, ...delta2</li>
+<li><img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.11.46.png" alt="屏幕快照 2017-04-05 下午5.11.46"/></li>
+</ol>
+
+<p>最后，权重的偏导数（即梯度）为：<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.12.46.png" alt="屏幕快照 2017-04-05 下午5.12.46"/></p>
+
+<h3 id="toc_13">模型评估</h3>
+
+<p>我们通常把样本集合按6:2:2的比例分为训练集（Training Set）、交叉验证集（Cross Validation Set）和测试集（Test Set）<br/>
+训练集用来训练，验证机用来调整模型，测试集用来最终评估模型。</p>
+
+<p>以下是几种常用评估方法：</p>
+
+<h5 id="toc_14">多项式指数</h5>
+
+<p><img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.17.29.png" alt="屏幕快照 2017-04-05 下午5.17.29"/><br/>
+过拟合：Jtrain很小，Jcv很大<br/>
+欠拟合：Jtrain和Jcv都很大</p>
+
+<h5 id="toc_15">lambda曲线</h5>
+
+<p>正则化后，横轴为λ,纵轴为不带正则化的代价函数，通过绘制训练集和验证集来分析高偏差和高方差情况。<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.19.41.png" alt="屏幕快照 2017-04-05 下午5.19.41"/><br/>
+从上图可以看到，随着λ增加，训练集（蓝线）从高方差到高偏差，而验证集（绿色）从高方差-低方差-高偏差。</p>
+
+<h5 id="toc_16">学习曲线（Learning Curve）</h5>
+
+<p>横轴为样本数量m，纵轴为不带正则化的代价函数，同样的需要绘制训练集和验证集来分析高偏差和高方差情况。<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.22.02.png" alt="屏幕快照 2017-04-05 下午5.22.02"/><br/>
+上图是高偏差情况<strong>（Jtrain和Jcv都很大）</strong>，随着样本数量的增加，训练集和验证集趋于稳定并且相差不大。这种情况，盲目的增加样本数量是起不来作用的。</p>
+
+<p><img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.23.19.png" alt="屏幕快照 2017-04-05 下午5.23.19"/><br/>
+上图是高方差的情况<strong>（Jtrain小，Jcv大）</strong>，随着样本数量的增加，训练集和验证集趋于稳定但是相差较大。这种情况，增加样本数量是能够减少误差。</p>
+
+<h3 id="toc_17">处理过拟合和欠拟合的方法</h3>
+
+<p><img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.24.29.png" alt="屏幕快照 2017-04-05 下午5.24.29"/></p>
+
+<p><img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.25.15.png" alt="屏幕快照 2017-04-05 下午5.25.15"/></p>
+
+<p><img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.25.25.png" alt="屏幕快照 2017-04-05 下午5.25.25"/></p>
+
+<h3 id="toc_18">样本偏斜（Skewed Data）</h3>
+
+<p>样本偏斜是指样本分布不均匀，负类比正类多太多，比如训练垃圾邮件分类器时，1000个训练样本中只有10个是垃圾邮件，这样的样本就称为样本偏斜（skewed）。<br/>
+对于样本偏斜的情况，上述的方法就不能很好地评估模型了，原因是：假设你总是预测y = 0，那么错误率最大也只有0.01（只有那10个垃圾邮件被错误分类了）。</p>
+
+<h3 id="toc_19">单值分析</h3>
+
+<p>因此，我们引入了查准率（precision）和召回率（recall）以及F1分数的概念。<br/>
+设tp（true positive)=正类and预测为正类的数量， <br/>
+fp（false positive）=负类and预测为正类的数量， <br/>
+fn（false nagetive）=正类and预测为负类的数量。</p>
+
+<p>查准率 P=tp/(tp+fp) <br/>
+召回率 R=tp/(tp+fn)</p>
+
+<p>一个系统P值和R值不可能同时很大。举个例子，logistics回归，我们把0.5阀值设置的大点，改为0.7，那么tp减少，fp减少，fn增大，那我们的P增大，R减小，也就是说我们预测的更准确了。反之，R高，P低。</p>
+
+<p>通常我们使用它们的调和平均数（即F1 Score）来衡量，即F = 2(P*R)/(P+R) , F值大，较好。</p>
+
+<h3 id="toc_20">支持向量机 SVM</h3>
+
+<p>支持向量机与Logistics回归相似，但SVM引入了核函数的概念。<br/>
+核函数可以看做相似度（Similarity）<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.37.52.png" alt="屏幕快照 2017-04-05 下午5.37.52"/><br/>
+样本空间上有三个点l1, l2, l3，对于任意给出的x，定义相似度为：<br/>
+f1 = Similarity(x, l1) = exp(-(||x - l1||<sup>2)</sup> / 2<em>σ<sup>2</sup> )<br/>
+f2 = Similarity(x, l2) = exp(-(||x - l2||<sup>2)</sup> / 2</em>σ<sup>2</sup> )<br/>
+f3 = Similarity(x, l3) = exp(-(||x - l3||<sup>2)</sup> / 2*σ<sup>2</sup> )</p>
+
+<p>其中exp(-(||x - l1||<sup>2)</sup> / 2*σ<sup>2</sup> )被称为高斯核（Gaussian Kernal），参数σ越小，变化越快，σ越大，变化越慢</p>
+
+<h3 id="toc_21">K-means算法</h3>
+
+<p>k-means算法是一种聚类算法，大体上的意思是：随机初始化K个聚点，遍历每个样本点，计算其属于哪个聚点，这样就分出了K个群，对每个群再计算每个群的聚点，然后重复这个过程，直到收敛。</p>
+
+<p>Repeat {<br/>
+    for = 1 to m<br/>
+    ci := index (from 1 to K) of cluster centroid closest to xi<br/>
+    for = 1 to K<br/>
+    uk := average (mean) of points assigned to cluster k<br/>
+}</p>
+
+<p>代价函数为：<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.50.30.png" alt="屏幕快照 2017-04-05 下午5.50.30"/><br/>
+为了避免局部最优解，通常要多次运行K-means算法，选出代价最小的那一次，idx记得要随机初始化。</p>
+
+<h3 id="toc_22">PCA 主成分分析</h3>
+
+<p>Principal Component Analysis(PCA), 主成分析法。我们主要使用这个方法来降低训练集的维度（Dimension Reduction）。</p>
+
+<p>数学原理我还不太理解，大概是和线性代数中的线性变换有关，用线性相关的矩阵去乘训练集？？</p>
+
+<h3 id="toc_23">异常检测 Anomaly Detection</h3>
+
+<p>多元高斯模型概率分布如下：<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%885.56.45.png" alt="屏幕快照 2017-04-05 下午5.56.45"/></p>
+
+<p>对所有的特征建立多元高斯模型。预测一个样本时，只需要带入到上面的公式，当计算出的值小于一个阈值ϵ,我们认为这个样本是异常的。<br/>
+缺点：m&gt;n或者∑必须是非奇异矩阵。</p>
+
+<h4 id="toc_24">如何选阈值ϵ？</h4>
+
+<p>利用F1 Score！<br/>
+从最小的概率开始，每次迭代增加一个很小的步长，并计算F1 Score。</p>
+
+<h3 id="toc_25">推荐系统 Recommend System</h3>
+
+<h4 id="toc_26">基于内容的推荐 （Content-Based recommendations）</h4>
+
+<p>预先定义好内容的特征向量，并让用户去设置自己的喜好特征向量</p>
+
+<h5 id="toc_27">协同过滤算法（Collaborative filtering）</h5>
+
+<p>同时优化内容特征向量和用户特征向量</p>
+
+<h3 id="toc_28">大规模机器学习</h3>
+
+<p>对于一些机器学习算法，当训练集十分庞大时，可以将一部分任务分散到多台机器上同时进行，最后在进行求和。<br/>
+比如线性回归、逻辑回归以及神经网络的代价函数的计算，可以将任务分给多台机器，最后求和即可。</p>
+
+<h3 id="toc_29">机器学习流水线</h3>
+
+<p>Photo OCR的例子：</p>
+
+<p><img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%886.08.01.png" alt="屏幕快照 2017-04-05 下午6.08.01"/></p>
+
+<p>对于复杂的机器学习任务，通常要分为几个模块来进行，不同的模块由不同的人来负责。</p>
+
+<h4 id="toc_30">上限分析 Ceiling Analysis</h4>
+
+<p>我们先假定流水线的第一个模块准确率为100%，然后检查最终的准确率提高了多少，然后再假定第二个模块准确率也是100%，以此类推，最终可以判断出哪些模块还有改进的空间，哪些模块则不必再费力去改进了。<br/>
+<img src="media/14898046974856/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-04-05%20%E4%B8%8B%E5%8D%886.12.07.png" alt="屏幕快照 2017-04-05 下午6.12.07"/></p>
+
+            </div>
+            <div>
+                
+                
+                
+            </div>
+        </article>
+    </div>
+</div>
+
+<script src="asset/jquery-3.3.1.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#footer').show()
+    })
+
+    /** 生成1-4的随机图片标签 **/
+    function getRandomImage() {
+        var index = Math.ceil(Math.random() * 10) % 4;
+        var path = './asset/banner/' + index + '.jpg'
+        // return '<img src="/' + index + '.jpg" >';
+        return '<img src="' + path + '#lazyload-blur" data-src="' + path +
+            '" class="lazyload" onerror="imgError(this,3)" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">'
+    }
+
+    /** 根据传进来的元素id,追加一个随机图片并显示 **/
+    function showRandonImage(divId) {
+        var oldHTML = document.getElementById(divId).innerHTML;
+        var newHTML = oldHTML + getRandomImage();
+        document.getElementById(divId).innerHTML = newHTML;
+    }
+
+    showRandonImage('surpriseImg');
+</script>  <footer id="footer" class="cuckoo page-footer" style="display: none">
+    <div class="wrapper">
+        <p>This blog is maintained by Forrest</a></p>
+    </div>
+</footer>
+
+
