@@ -3,7 +3,7 @@
   <title><![CDATA[咕噜灵波]]></title>
   <link href="http://forrest0503.github.io/atom.xml" rel="self"/>
   <link href="http://forrest0503.github.io/"/>
-  <updated>2020-04-30T20:14:10+08:00</updated>
+  <updated>2020-05-05T13:41:11+08:00</updated>
   <id>http://forrest0503.github.io/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -11,7 +11,264 @@
   <generator uri="http://www.coderforart.com/">CoderForArt</generator>
   
   <entry>
-    <title type="html"><![CDATA[逻辑回归为何不用MSE做为损失函数]]></title>
+    <title type="html"><![CDATA[深度学习模型的一些改进操作]]></title>
+    <link href="http://forrest0503.github.io/15885199569945.html"/>
+    <updated>2020-05-03T23:32:36+08:00</updated>
+    <id>http://forrest0503.github.io/15885199569945.html</id>
+    <content type="html">
+<![CDATA[<h2 id="toc_0">从数据入手</h2>
+
+<ol>
+<li>数据增强</li>
+<li>数据清洗</li>
+</ol>
+
+<h2 id="toc_1">从模型超参数入手</h2>
+
+<ol>
+<li>调整dropout概率</li>
+<li>调整weight decay</li>
+<li>学习率衰减</li>
+</ol>
+
+<h2 id="toc_2">从模型结构入手</h2>
+
+<ol>
+<li>加入BatchNorm、GroupNorm</li>
+<li>加入注意力机制</li>
+<li>使用Resnet结构加深网络</li>
+</ol>
+]]>
+    </content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[计算CNN模型所需的计算量（FLOPs）和参数量（parameters）]]></title>
+    <link href="http://forrest0503.github.io/15885174968469.html"/>
+    <updated>2020-05-03T22:51:36+08:00</updated>
+    <id>http://forrest0503.github.io/15885174968469.html</id>
+    <content type="html">
+<![CDATA[<h2 id="toc_0">参数量：</h2>
+
+<p>（以下均考虑bias）<br/>
+普通卷积层：<br/>
+params = (C_in * k * k + 1) * C_out</p>
+
+<p>Depthwise卷积层：<br/>
+params = C_in * (k * k * 1 + 1) + C_out * (1 * 1 * C_in + 1)</p>
+
+<p><em>解释：<br/>
+第一部分：对输入的每个通道使用单通道卷积核进行卷积；<br/>
+第二部分：使用1x1卷积将输入通道数转变成输出通道数：</em></p>
+
+<p>全连接层：<br/>
+params = (I + 1) * O</p>
+
+<h2 id="toc_1">计算量：</h2>
+
+<p>通常需要先求出输出特征图的尺寸H_out和W_out<br/>
+H_out = (H_in - k + 2*padding) / stride + 1</p>
+
+<p>普通卷积层：<br/>
+FLOPs =（2 * C_in * k * k) * H_out * W_out * C_out</p>
+
+<p><em>解释：对位相乘计算k<sup>2</sup> 次，加法计算k<sup>2</sup> -1次，bias每个输出位置计算1次</em></p>
+
+<p>全连接层：<br/>
+FLOPs = （2 * I -1） * O + O = （2 * I) * O</p>
+]]>
+    </content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[数字图像处理，一些常见概念]]></title>
+    <link href="http://forrest0503.github.io/15885057062234.html"/>
+    <updated>2020-05-03T19:35:06+08:00</updated>
+    <id>http://forrest0503.github.io/15885057062234.html</id>
+    <content type="html">
+<![CDATA[<p>目录</p>
+
+<ul>
+<li>图像卷积</li>
+<li>图像梯度</li>
+<li>边缘提取
+<ul>
+<li>1. Prewitt</li>
+<li>2. Sobel算子</li>
+<li>3. Laplacian算子</li>
+</ul></li>
+<li>平滑去噪
+<ul>
+<li>1. 高斯滤波</li>
+<li>2. 均值滤波</li>
+<li>3. 中值滤波</li>
+</ul></li>
+<li>图像颜色空间
+<ul>
+<li>1. RGB</li>
+<li>2. CMYK</li>
+</ul></li>
+<li>特征点提取
+<ul>
+<li>1. HOG</li>
+<li>2. SIFT</li>
+</ul></li>
+<li>上采样
+<ul>
+<li>1. 双线性插值</li>
+</ul></li>
+</ul>
+
+<h2 id="toc_0">图像卷积</h2>
+
+<p>严格来说，在实现<strong>卷积运算</strong>时，与我们直观的理解有一点区别：卷积核需要旋转180度！</p>
+
+<p>例如，卷积核描述为[[1,0,-1],[1,0,-1],[1,0,-1]]，而卷积运算过程如下图所示，在运算时把卷积核旋转了180度。<br/>
+<img src="media/15885057062234/15886482624897.jpg" alt=""/><br/>
+（图片源自百度）</p>
+
+<p>这是为了与卷积公式对应起来，从公式中可以看出，应该是头尾两个元素相乘，然后求和。<br/>
+<img src="media/15885057062234/15886481847310.jpg" alt=""/></p>
+
+<p>还有一个概念是<strong>互相关(Cross-correlation)</strong>，流程和卷积类似，区别在于互相关不需要旋转180度。互相关主要用于计算两个图像的相关性（主要用于图像配准）。因为我们平时接触的卷积核大都是关于x轴和y轴对称的，所以卷积和互相关在这种情况下没什么区别。</p>
+
+<h2 id="toc_1">图像梯度</h2>
+
+<p>梯度的方向是函数 f(x,y) 变化最快的方向，当图像中存在边缘时，有一些相邻像素的灰度值变化比较大，即一定有较大的梯度值。所以可以求图像的梯度来确定图像的边缘。</p>
+
+<p>如何求梯度的方向呢？我们先求出x、y方向上的偏导数：<br/>
+<img src="media/15885057062234/15886492091067.jpg" alt=""/></p>
+
+<p>梯度的方向为：<br/>
+<img src="media/15885057062234/15886492737274.jpg" alt=""/></p>
+
+<p>梯度的大小为：<br/>
+<img src="media/15885057062234/15886492846631.jpg" alt=""/></p>
+
+<p>对于离散的图像而言，可以用差分法来求梯度：<br/>
+一阶差分（相当于一阶梯度）：<br/>
+<img src="media/15885057062234/15886493543454.jpg" alt=""/><br/>
+二阶差分（相当于二阶梯度）：<br/>
+<img src="media/15885057062234/15886493716224.jpg" alt=""/></p>
+
+<h3 id="toc_2">图像一阶二阶梯度的区别</h3>
+
+<ol>
+<li>一阶梯度求出的边缘更粗，二阶梯度求出的边缘更细</li>
+<li>二阶梯度有双边沿效应</li>
+<li>基于梯度求边缘，对噪声非常敏感，二阶梯度比一阶梯度更敏感。</li>
+</ol>
+
+<h2 id="toc_3">边缘提取</h2>
+
+<p>边缘是像素值发生剧烈变化的位置，具有较大的梯度，因此可以通过求梯度来求边缘。</p>
+
+<h3 id="toc_4">1. Prewitt算子</h3>
+
+<p>计算水平梯度，检测垂直边缘:<br/>
+<img src="media/15885057062234/15886512649824.jpg" alt=""/></p>
+
+<p>计算垂直梯度，检测水平边缘:<br/>
+<img src="media/15885057062234/15886512960721.jpg" alt=""/></p>
+
+<h3 id="toc_5">2. Sobel算子</h3>
+
+<p>Sobel算子是在Prewitt算子的基础上进行改进，增强了中间这个位置的权重：<br/>
+计算水平梯度，检测垂直边缘：<br/>
+<img src="media/15885057062234/15886513629550.jpg" alt=""/></p>
+
+<p>计算垂直梯度，检测水平边缘：<br/>
+<img src="media/15885057062234/15886513772568.jpg" alt=""/></p>
+
+<p>Sobel更强调了和边缘相邻的像素点对边缘的影响。相比较Prewitt算子，Sobel模板能够较好的抑制噪声（平滑）效果。（更关注中心像素，一定程度上忽略角落里的噪声点）</p>
+
+<h3 id="toc_6">3. Laplacian算子</h3>
+
+<p>上面两个算子是利用一阶差分得到的，而Laplacian算子是通过二阶差分叠加起来得到的。<br/>
+我们前面推导过二阶差分的式子，如果把x、y方向合并起来，就是这个样子<br/>
+<img src="media/15885057062234/15886518026178.jpg" alt=""/></p>
+
+<p>对应的算子长这样：<br/>
+<img src="media/15885057062234/15886518190545.jpg" alt=""/></p>
+
+<p>显然，Laplacian算子可以同时处理水平和垂直方向的边缘。</p>
+
+<h2 id="toc_7">平滑去噪</h2>
+
+<p>在提取边缘之前，通常需要先去噪。因为噪声处的梯度也很大，容易对边缘提取造成影响。</p>
+
+<p>噪声去除有基于卷积（高斯滤波，均值滤波，中值滤波等）和基于形态学（开运算、闭运算）两种方法。</p>
+
+<p>要注意的一点是，去噪的卷积核需要乘以一个系数，使得所有元素之和=1。目的是保证图像的能量守恒。</p>
+
+<h3 id="toc_8">1. 均值滤波</h3>
+
+<p><img src="media/15885057062234/15886557017747.jpg" alt=""/><br/>
+用3x3区域内灰度的平均值，作为中间像素的新灰度值。<br/>
+优点：平滑力度大，简单粗暴¿<br/>
+缺点：容易丢失图像细节</p>
+
+<h3 id="toc_9">2.高斯滤波</h3>
+
+<p><img src="media/15885057062234/15886558019664.jpg" alt=""/><br/>
+本质上也是均值滤波，不过是「加权平均」。<br/>
+高斯核应该符合高斯分布，更关注中心像素，因此相比于均值滤波，能够更好地保留细节。</p>
+
+<h3 id="toc_10">3.中值滤波</h3>
+
+<p>顾名思义，就是用邻域内的中值作为中间像素的新灰度值。<br/>
+优点：对于<strong>椒盐噪声</strong>（散粒噪声）效果好<br/>
+缺点：对于细节丰富的图像，不宜使用中值滤波（把细节当成噪声了...）</p>
+
+<h2 id="toc_11">图像颜色空间</h2>
+
+<h3 id="toc_12">1. RGB</h3>
+
+<p>需要注意的是，在有些框架中（如OpenCV），存储顺序是BGR而不是RGB</p>
+
+<h3 id="toc_13">2. CMY（或叫做CMYK）</h3>
+
+<p><img src="media/15885057062234/15886562649671.jpg" alt=""/></p>
+
+<p>C：Cyan ＝ 青色，常被误称为“天蓝色”或“湛蓝”<br/>
+M：Magenta ＝ 洋红色，又称为“品红色”<br/>
+Y：Yellow ＝ 黄色<br/>
+K：blacK ＝ 黑色</p>
+
+<h3 id="toc_14">相互转化关系</h3>
+
+<ul>
+<li><p>RGB与CMY<br/>
+从白光中减去某一个分量<br/>
+C = 1 - R<br/>
+M = 1 - G<br/>
+Y = 1 - B</p></li>
+<li><p>RGB与灰度图<br/>
+心理学公式：Grey = 0.299×R + 0.587×G + 0.114×B</p></li>
+</ul>
+
+<h2 id="toc_15">插值方法</h2>
+
+<h3 id="toc_16">双线性插值</h3>
+
+<p>是一种<strong>后向映射</strong>方法。</p>
+
+<p>利用(x&#39;, y&#39; )点的四个最近邻象素A、B、C、D， 灰度值分别为g(A)、g(B)、g(C)、g(D)</p>
+
+<p><img src="media/15885057062234/15886571141159.jpg" alt=""/></p>
+
+<p>先求水平方向线性插值：<br/>
+g(E) = g(A) + (x&#39;-i)[g(B) - g(A)] <br/>
+g(F) = g(C) + (x&#39;-i)[g(D) - g(C)] </p>
+
+<p>最后求垂直方向线性插值：<br/>
+g(x&#39;, y&#39;) = g(E) + (y&#39;-j)[g(F) - g(E)] </p>
+]]>
+    </content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[逻辑回归为何不用MSE作为损失函数]]></title>
     <link href="http://forrest0503.github.io/15882412109735.html"/>
     <updated>2020-04-30T18:06:50+08:00</updated>
     <id>http://forrest0503.github.io/15882412109735.html</id>

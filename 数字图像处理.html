@@ -3,7 +3,7 @@
 
 <head>
     <title>
-         逻辑回归为何不用MSE作为损失函数 - 咕噜灵波 
+         数字图像处理 - 咕噜灵波 
     </title>
 
     <meta charset="UTF-8">
@@ -60,7 +60,8 @@
     <script src="./asset/live2d/autoload.js"></script>
 </body>
 
-</html> <div class="page-content cuckoo">
+</html> <div id="loading"></div>
+<div class="page-content cuckoo" id="body" style="display: none">
 
     <div class="pattern-center ">
         <div id="surpriseImg" class="pattern-attachment-img"> 
@@ -68,57 +69,48 @@
                 onerror="imgError(this,3)" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;"> -->
         </div>
         <header class="pattern-header ">
-            <h1 class="entry-title">逻辑回归为何不用MSE作为损失函数</h1>
+            <h1 class="entry-title">欢迎来到我的博客</h1>
         </header>
     </div>
 
     <div class="wrapper">
-        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-            <header class="post-header">
-                <!-- <h1 class="post-title" itemprop="name headline">逻辑回归为何不用MSE作为损失函数</h1> -->
-                <div class="post-description">
-                    
-                </div>
-            </header>
-            <div class="post-content" itemprop="articleBody">
-                <h3 id="toc_0">直观的理解</h3>
 
-<p>首先，MSE损失是有上限的，在所有样本都预测错误时，MSE最大值是1；而交叉熵可以取到正无穷。所以交叉熵可以基于错误预测更多的“惩罚”。<br/>
-另外，分类问题中的label是离散值0和1，可看做是一种特殊的“回归”问题，只不过目标的值域只有两个数。。。所以感觉效果不会很好。</p>
+        <div class="home">
 
-<h3 id="toc_1">从梯度的角度看</h3>
-
-<p>目标函数对参数W求导，存在 \( α\left ( 1-α \right )\) 这一项，这就导致了，不论你预测趋近1或者-1，梯度都能趋近于0。会更容易导致梯度消失，导致没办法朝着正确的方向进行优化。</p>
-
-<p>而用交叉熵作为损失函数时，存在\(σ-y\) 这一项。意思是只有当预测趋近于label的时候，梯度才趋近于0，这正是我们的目标。</p>
-
-<h3 id="toc_2">从是否是凸函数的角度看</h3>
-
-<p>我们都知道，非凸函数在优化时可能会陷入局部最优，所谓凸函数，就是二阶导处处大于零的函数。<br/>
-Sigmoid+MSE时，损失函数是非凸的，很容易陷入局部最优。<br/>
-Sigmoid+BCE时，损失函数是凸函数，一定能找到最优解。</p>
-
-<p>下面证明一下<br/>
-<img src="media/15882412109735/3091588247676_.pic_%E5%89%AF%E6%9C%AC.jpg" alt="3091588247676_.pic_副本"/><br/>
-Sigmoid+MSE，二阶导可能小于0，所以是非凸的~</p>
-
-<p><img src="media/15882412109735/3081588247675_.pic_%E5%89%AF%E6%9C%AC.jpg" alt="3081588247675_.pic_副本"/><br/>
-Sigmoid+BCE时，二阶导永远大于等于0，所以是凸函数~</p>
-
-            </div>
-            <div>
+            <ul class="entry-list" style="margin-top: 20px;">
                 
+                <li class="entry-item" itemscope="" itemtype="http://schema.org/Article">
+                    <div class="entry-detail">
+                        <h2 itemprop="name" class="entry-title"><a itemprop="url" href="15885057062234.html">数字图像处理，一些常见概念</a>
+                        </h2>
+                        <div class="entry-meta">
+                            <time class="entry-updated-time" datetime="2020/5/3">2020-05-03T19:35:06+08:00</time>
+                        </div>
+                        <div itemprop="description" class="entry-description">
+                            
+                        </div>
+                    </div>
+                </li>
                 
-                
-            </div>
-        </article>
+            </ul>
+            <p class="paging">
+                 
+            </p>
+        </div>
     </div>
 </div>
 
 <script src="asset/jquery-3.3.1.min.js"></script>
+<script src="asset/utils.js"></script>
 
 <script>
     $(document).ready(function () {
+        $('.entry-updated-time').each(function () {
+            let parsedTime = parseTime($(this).text()).slice(0, 10)
+            $(this).text(parsedTime)
+        })
+        $('#loading').hide()
+        $('#body').show()
         $('#footer').show()
     })
 
@@ -127,8 +119,8 @@ Sigmoid+BCE时，二阶导永远大于等于0，所以是凸函数~</p>
         var index = Math.ceil(Math.random() * 10) % 4;
         var path = './asset/banner/' + index + '.jpg'
         // return '<img src="/' + index + '.jpg" >';
-        return '<img src="' + path + '#lazyload-blur" data-src="' + path +
-            '" class="lazyload" onerror="imgError(this,3)" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">'
+        return '<img src="' + path + '#lazyload-blur" data-src="' + path + 
+        '" class="lazyload" onerror="imgError(this,3)" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">'
     }
 
     /** 根据传进来的元素id,追加一个随机图片并显示 **/

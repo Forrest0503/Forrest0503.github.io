@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+         数字图像处理，一些常见概念 - 咕噜灵波 
+    </title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="肥宅炼丹术士的日常">
+
+    <!-- 魔改部分 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="asset/style.css">
+
+    <link rel="stylesheet" type="text/css" href="asset/cuckoo.css">
+    <link rel="stylesheet" type="text/css" href="asset/main.css">
+    <link rel="stylesheet" type="text/css" href="asset/atom-one-light.css">
+
+
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="咕噜灵波">
+
+    <script src="asset/highlight.pack.js"></script>
+    <!--    <script>hljs.initHighlightingOnLoad();</script>-->
+</head>
+
+<body>
+    <header class="site-header cuckoo">
+
+        <div class="wrapper">
+            <a class="site-title" href="index.html">咕噜灵波</a>
+            <nav class="site-nav">
+                <a href="#" class="menu-icon">
+                    <svg viewBox="0 0 18 15">
+                        <path fill="#424242"
+                            d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z">
+                        </path>
+                        <path fill="#424242"
+                            d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z">
+                        </path>
+                        <path fill="#424242"
+                            d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z">
+                        </path>
+                    </svg>
+                </a>
+                <div class="trigger">
+                    
+                    <a class="page-link" href="index.html">Home</a>
+                    
+                    <a class="page-link" href="archives.html">Archives</a>
+                    
+                </div>
+            </nav>
+        </div>
+    </header>
+
+
+
+    <script src="./asset/live2d/autoload.js"></script>
+</body>
+
+</html> <div class="page-content cuckoo">
+
+    <div class="pattern-center ">
+        <div id="surpriseImg" class="pattern-attachment-img"> 
+            <!-- <img src="suprizeImg#lazyload-blur" data-src="suprizeImg" class="lazyload"
+                onerror="imgError(this,3)" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;"> -->
+        </div>
+        <header class="pattern-header ">
+            <h1 class="entry-title">数字图像处理，一些常见概念</h1>
+        </header>
+    </div>
+
+    <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+            <header class="post-header">
+                <!-- <h1 class="post-title" itemprop="name headline">数字图像处理，一些常见概念</h1> -->
+                <div class="post-description">
+                    
+                </div>
+            </header>
+            <div class="post-content" itemprop="articleBody">
+                <p>目录</p>
+
+<ul>
+<li>图像卷积</li>
+<li>图像梯度</li>
+<li>边缘提取
+<ul>
+<li>1. Prewitt</li>
+<li>2. Sobel算子</li>
+<li>3. Laplacian算子</li>
+</ul></li>
+<li>平滑去噪
+<ul>
+<li>1. 高斯滤波</li>
+<li>2. 均值滤波</li>
+<li>3. 中值滤波</li>
+</ul></li>
+<li>图像颜色空间
+<ul>
+<li>1. RGB</li>
+<li>2. CMYK</li>
+</ul></li>
+<li>特征点提取
+<ul>
+<li>1. HOG</li>
+<li>2. SIFT</li>
+</ul></li>
+<li>上采样
+<ul>
+<li>1. 双线性插值</li>
+</ul></li>
+</ul>
+
+<h2 id="toc_0">图像卷积</h2>
+
+<p>严格来说，在实现<strong>卷积运算</strong>时，与我们直观的理解有一点区别：卷积核需要旋转180度！</p>
+
+<p>例如，卷积核描述为[[1,0,-1],[1,0,-1],[1,0,-1]]，而卷积运算过程如下图所示，在运算时把卷积核旋转了180度。<br/>
+<img src="media/15885057062234/15886482624897.jpg" alt=""/><br/>
+（图片源自百度）</p>
+
+<p>这是为了与卷积公式对应起来，从公式中可以看出，应该是头尾两个元素相乘，然后求和。<br/>
+<img src="media/15885057062234/15886481847310.jpg" alt=""/></p>
+
+<p>还有一个概念是<strong>互相关(Cross-correlation)</strong>，流程和卷积类似，区别在于互相关不需要旋转180度。互相关主要用于计算两个图像的相关性（主要用于图像配准）。因为我们平时接触的卷积核大都是关于x轴和y轴对称的，所以卷积和互相关在这种情况下没什么区别。</p>
+
+<h2 id="toc_1">图像梯度</h2>
+
+<p>梯度的方向是函数 f(x,y) 变化最快的方向，当图像中存在边缘时，有一些相邻像素的灰度值变化比较大，即一定有较大的梯度值。所以可以求图像的梯度来确定图像的边缘。</p>
+
+<p>如何求梯度的方向呢？我们先求出x、y方向上的偏导数：<br/>
+<img src="media/15885057062234/15886492091067.jpg" alt=""/></p>
+
+<p>梯度的方向为：<br/>
+<img src="media/15885057062234/15886492737274.jpg" alt=""/></p>
+
+<p>梯度的大小为：<br/>
+<img src="media/15885057062234/15886492846631.jpg" alt=""/></p>
+
+<p>对于离散的图像而言，可以用差分法来求梯度：<br/>
+一阶差分（相当于一阶梯度）：<br/>
+<img src="media/15885057062234/15886493543454.jpg" alt=""/><br/>
+二阶差分（相当于二阶梯度）：<br/>
+<img src="media/15885057062234/15886493716224.jpg" alt=""/></p>
+
+<h3 id="toc_2">图像一阶二阶梯度的区别</h3>
+
+<ol>
+<li>一阶梯度求出的边缘更粗，二阶梯度求出的边缘更细</li>
+<li>二阶梯度有双边沿效应</li>
+<li>基于梯度求边缘，对噪声非常敏感，二阶梯度比一阶梯度更敏感。</li>
+</ol>
+
+<h2 id="toc_3">边缘提取</h2>
+
+<p>边缘是像素值发生剧烈变化的位置，具有较大的梯度，因此可以通过求梯度来求边缘。</p>
+
+<h3 id="toc_4">1. Prewitt算子</h3>
+
+<p>计算水平梯度，检测垂直边缘:<br/>
+<img src="media/15885057062234/15886512649824.jpg" alt=""/></p>
+
+<p>计算垂直梯度，检测水平边缘:<br/>
+<img src="media/15885057062234/15886512960721.jpg" alt=""/></p>
+
+<h3 id="toc_5">2. Sobel算子</h3>
+
+<p>Sobel算子是在Prewitt算子的基础上进行改进，增强了中间这个位置的权重：<br/>
+计算水平梯度，检测垂直边缘：<br/>
+<img src="media/15885057062234/15886513629550.jpg" alt=""/></p>
+
+<p>计算垂直梯度，检测水平边缘：<br/>
+<img src="media/15885057062234/15886513772568.jpg" alt=""/></p>
+
+<p>Sobel更强调了和边缘相邻的像素点对边缘的影响。相比较Prewitt算子，Sobel模板能够较好的抑制噪声（平滑）效果。（更关注中心像素，一定程度上忽略角落里的噪声点）</p>
+
+<h3 id="toc_6">3. Laplacian算子</h3>
+
+<p>上面两个算子是利用一阶差分得到的，而Laplacian算子是通过二阶差分叠加起来得到的。<br/>
+我们前面推导过二阶差分的式子，如果把x、y方向合并起来，就是这个样子<br/>
+<img src="media/15885057062234/15886518026178.jpg" alt=""/></p>
+
+<p>对应的算子长这样：<br/>
+<img src="media/15885057062234/15886518190545.jpg" alt=""/></p>
+
+<p>显然，Laplacian算子可以同时处理水平和垂直方向的边缘。</p>
+
+<h2 id="toc_7">平滑去噪</h2>
+
+<p>在提取边缘之前，通常需要先去噪。因为噪声处的梯度也很大，容易对边缘提取造成影响。</p>
+
+<p>噪声去除有基于卷积（高斯滤波，均值滤波，中值滤波等）和基于形态学（开运算、闭运算）两种方法。</p>
+
+<p>要注意的一点是，去噪的卷积核需要乘以一个系数，使得所有元素之和=1。目的是保证图像的能量守恒。</p>
+
+<h3 id="toc_8">1. 均值滤波</h3>
+
+<p><img src="media/15885057062234/15886557017747.jpg" alt=""/><br/>
+用3x3区域内灰度的平均值，作为中间像素的新灰度值。<br/>
+优点：平滑力度大，简单粗暴¿<br/>
+缺点：容易丢失图像细节</p>
+
+<h3 id="toc_9">2.高斯滤波</h3>
+
+<p><img src="media/15885057062234/15886558019664.jpg" alt=""/><br/>
+本质上也是均值滤波，不过是「加权平均」。<br/>
+高斯核应该符合高斯分布，更关注中心像素，因此相比于均值滤波，能够更好地保留细节。</p>
+
+<h3 id="toc_10">3.中值滤波</h3>
+
+<p>顾名思义，就是用邻域内的中值作为中间像素的新灰度值。<br/>
+优点：对于<strong>椒盐噪声</strong>（散粒噪声）效果好<br/>
+缺点：对于细节丰富的图像，不宜使用中值滤波（把细节当成噪声了...）</p>
+
+<h2 id="toc_11">图像颜色空间</h2>
+
+<h3 id="toc_12">1. RGB</h3>
+
+<p>需要注意的是，在有些框架中（如OpenCV），存储顺序是BGR而不是RGB</p>
+
+<h3 id="toc_13">2. CMY（或叫做CMYK）</h3>
+
+<p><img src="media/15885057062234/15886562649671.jpg" alt=""/></p>
+
+<p>C：Cyan ＝ 青色，常被误称为“天蓝色”或“湛蓝”<br/>
+M：Magenta ＝ 洋红色，又称为“品红色”<br/>
+Y：Yellow ＝ 黄色<br/>
+K：blacK ＝ 黑色</p>
+
+<h3 id="toc_14">相互转化关系</h3>
+
+<ul>
+<li><p>RGB与CMY<br/>
+从白光中减去某一个分量<br/>
+C = 1 - R<br/>
+M = 1 - G<br/>
+Y = 1 - B</p></li>
+<li><p>RGB与灰度图<br/>
+心理学公式：Grey = 0.299×R + 0.587×G + 0.114×B</p></li>
+</ul>
+
+<h2 id="toc_15">插值方法</h2>
+
+<h3 id="toc_16">双线性插值</h3>
+
+<p>是一种<strong>后向映射</strong>方法。</p>
+
+<p>利用(x&#39;, y&#39; )点的四个最近邻象素A、B、C、D， 灰度值分别为g(A)、g(B)、g(C)、g(D)</p>
+
+<p><img src="media/15885057062234/15886571141159.jpg" alt=""/></p>
+
+<p>先求水平方向线性插值：<br/>
+g(E) = g(A) + (x&#39;-i)[g(B) - g(A)] <br/>
+g(F) = g(C) + (x&#39;-i)[g(D) - g(C)] </p>
+
+<p>最后求垂直方向线性插值：<br/>
+g(x&#39;, y&#39;) = g(E) + (y&#39;-j)[g(F) - g(E)] </p>
+
+            </div>
+            <div>
+                
+                
+                
+            </div>
+        </article>
+    </div>
+</div>
+
+<script src="asset/jquery-3.3.1.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#footer').show()
+    })
+
+    /** 生成1-4的随机图片标签 **/
+    function getRandomImage() {
+        var index = Math.ceil(Math.random() * 10) % 4;
+        var path = './asset/banner/' + index + '.jpg'
+        // return '<img src="/' + index + '.jpg" >';
+        return '<img src="' + path + '#lazyload-blur" data-src="' + path +
+            '" class="lazyload" onerror="imgError(this,3)" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">'
+    }
+
+    /** 根据传进来的元素id,追加一个随机图片并显示 **/
+    function showRandonImage(divId) {
+        var oldHTML = document.getElementById(divId).innerHTML;
+        var newHTML = oldHTML + getRandomImage();
+        document.getElementById(divId).innerHTML = newHTML;
+    }
+
+    showRandonImage('surpriseImg');
+</script>  <footer id="footer" class="cuckoo page-footer" style="display: none">
+    <div class="wrapper">
+        <p>This blog is maintained by TSERR0F</a></p>
+    </div>
+</footer>
+
+
